@@ -8,8 +8,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
-
 import java.util.Map;
 
 /**
@@ -24,7 +25,7 @@ public class SensorPoll implements SensorEventListener {
     private static final String SENSOR_DATA_DIR= "sensor_data";
     private long startTime, elapsedTime;
     private SensorEvent accelEvent = null, gyroEvent = null, magneticFieldEvent = null;
-    private File appDir, outFile;
+    private File appDir, outFile, dataDir;
     private BufferedWriter bw = null;
     private boolean start = false;
 
@@ -32,13 +33,18 @@ public class SensorPoll implements SensorEventListener {
         this.startTime = startTime;
         this.appDir = appDir;
 
-        File dataDir = new File(appDir, SENSOR_DATA_DIR);
+
+        dataDir = new File( appDir, SENSOR_DATA_DIR);
         if (!dataDir.exists()) {
             dataDir.mkdir();
         }
 
+
+    }
+
+    public void start() {
         int numFiles = dataDir.listFiles().length;
-        outFile = new File(dataDir, "sensor_data_" + numFiles + ".sd");
+        outFile = new File(dataDir, new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".txt");
         try {
             bw = new BufferedWriter(new FileWriter(outFile));
         } catch (IOException ioe) {
@@ -46,9 +52,6 @@ public class SensorPoll implements SensorEventListener {
         }
 
         System.out.println("----------------------> outFile " + outFile);
-    }
-
-    public void start() {
         start = true;
     }
 
@@ -110,9 +113,10 @@ public class SensorPoll implements SensorEventListener {
 
         if (!start) return;
         try {
-            bw.write(accelEvent.values[0] + " " + accelEvent.values[1] + " " + accelEvent.values[2]);
-            bw.write(gyroEvent.values[0] + " " + gyroEvent.values[1] + " " + gyroEvent.values[2]);
-            bw.write(magneticFieldEvent.values[0] + " " + magneticFieldEvent.values[1] + " " + magneticFieldEvent.values[2]);
+            bw.write(accelEvent.values[0] + " " + accelEvent.values[1] + " " + accelEvent.values[2] + " ");
+            bw.write(gyroEvent.values[0] + " " + gyroEvent.values[1] + " " + gyroEvent.values[2] + " ");
+            bw.write(magneticFieldEvent.values[0] + " " + magneticFieldEvent.values[1] + " " + magneticFieldEvent.values[2] + " ");
+            bw.write((System.currentTimeMillis() - startTime) + "\n");
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
