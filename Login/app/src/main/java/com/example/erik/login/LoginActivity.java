@@ -13,6 +13,7 @@ import android.util.Base64;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.CookieManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.CookieHandler;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -39,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
                 EditText mUN   = (EditText)findViewById(R.id.edit_un);
                 EditText mPASS   = (EditText)findViewById(R.id.edit_pass);
 
-                CharSequence text = "Calling doLogin();";
+                String text = "Connecting to Server.";
                 Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
 
                 SendHTTPLoginTask loginTask = new SendHTTPLoginTask();
@@ -58,15 +60,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     switch (code) {
                         case 403:
-                            new AlertDialog.Builder(LoginActivity.this)
-                                    .setTitle("Login incorrect")
-                                    .setMessage("Your username or password is wrong.")
-                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                        }
-                                    })
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                    .show();
+                            makeAlert("Login incorrect", "Your username or password is wrong.");
                             break;
 
                         default:
@@ -75,6 +69,18 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void makeAlert(String title, String msg) {
+        new AlertDialog.Builder(LoginActivity.this)
+                .setTitle(title)
+                .setMessage(msg)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     private void startJsonActivity(String cookie) {
@@ -112,8 +118,6 @@ public class LoginActivity extends AppCompatActivity {
             HttpURLConnection conn = null;
             try {
                 conn = (HttpURLConnection) new URL("http://uat.imqs.co.za/auth2/login").openConnection();
-//                conn = (HttpURLConnection) new URL("http://www.google.com").openConnection();
-
             } catch (Exception e) {
                 System.err.println("WAWAWAWAWAWA");
                 e.printStackTrace();
@@ -127,32 +131,34 @@ public class LoginActivity extends AppCompatActivity {
             conn.setReadTimeout(30000);
             conn.setInstanceFollowRedirects(true);
 
+            String result = null;
             try {
                 conn.setRequestMethod("POST");
                 conn.connect();
-                //InputStream is = conn.getInputStream();
-
 
                 switch(conn.getResponseCode()) {
                     case 200:   // OK
-                        String cookie = conn.getHeaderField("Set-Cookie");
-                        cookie = cookie.substring(0, cookie.indexOf(';'));
-                        System.out.println(cookie);
+                        result = conn.getHeaderField("Set-Cookie");
+                        result = result.substring(0, result.indexOf(';'));
+                        System.out.println(result);
                         System.out.println("YAAAAY=============================");
-                        return cookie;
-
-                    case 403:   // FORBIDDEN : aka wrong creds.
-                        return "error=403";
+                        break;
 
                     default:    // Some other non-OK response
-                        return "error=" + conn.getResponseCode();
+                        result = "error=" + conn.getResponseCode();
+                        break;
                 }
             } catch (Exception e) {
                 System.err.println("boooo :'(");
                 e.printStackTrace();
             }
-            return null;
-        }
 
+            try {
+                conn.disconnect();
+            } catch (Exception e) {
+            }
+
+            return result;
+        }
     }
 }
