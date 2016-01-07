@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SampleRecording</string>
+
+    <string name="title_activity_camera_preview">CameraPreview</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_camera">CameraActivity</string>
 </resources>

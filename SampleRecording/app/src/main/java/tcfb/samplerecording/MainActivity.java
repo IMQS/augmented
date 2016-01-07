@@ -5,13 +5,23 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.content.Intent;
+import android.hardware.Camera;
+import android.media.CamcorderProfile;
+import android.media.MediaRecorder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import java.io.IOException;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener {
     private SensorManager sm;
     private Sensor accelerometer;
     private Sensor accel, gyro, compass;
+
+    Button btnStartAnotherActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +33,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         accel = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gyro = sm.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         compass = sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        System.out.println("THIS THIS IS STARTING------------------------");
+
+        btnStartAnotherActivity = (Button) findViewById(R.id.btnStartAnotherActivity);
+        btnStartAnotherActivity.setOnClickListener(this);
     }
 
     protected void onPause() {
@@ -58,4 +70,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 break;
         }
     }
+    @Override
+    public void onClick(View view) {
+
+        Intent inent = new Intent(this, CameraActivity.class);
+
+        // calling an activity using <intent-filter> action name
+        //  Intent inent = new Intent("com.hmkcode.android.ANOTHER_ACTIVITY");
+
+        startActivity(inent);
+    }
+
 }
