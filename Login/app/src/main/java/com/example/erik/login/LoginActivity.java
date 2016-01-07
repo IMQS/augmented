@@ -1,10 +1,12 @@
 package com.example.erik.login;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
@@ -42,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 SendHTTPLoginTask loginTask = new SendHTTPLoginTask();
                 loginTask.execute(mUN.getText().toString(), mPASS.getText().toString());
-                String answer = null;
+                String answer = "empty";
                 try {
                     answer = loginTask.get();
                 } catch (Exception e) {
@@ -51,6 +53,25 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (answer.startsWith("session=")) {
                     startJsonActivity(answer);
+                } else if (answer.startsWith("error=")) {
+                    int code = Integer.parseInt(answer.split("=")[1]);
+
+                    switch (code) {
+                        case 403:
+                            new AlertDialog.Builder(LoginActivity.this)
+                                    .setTitle("Login incorrect")
+                                    .setMessage("Your username or password is wrong.")
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                        }
+                                    })
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .show();
+                            break;
+
+                        default:
+                            break;
+                    }
                 }
             }
         });
