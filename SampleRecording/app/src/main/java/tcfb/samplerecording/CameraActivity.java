@@ -1,6 +1,11 @@
 package tcfb.samplerecording;
 
+import android.content.Context;
 import android.hardware.Camera;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -18,10 +23,12 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class CameraActivity extends AppCompatActivity {
+public class CameraActivity extends AppCompatActivity implements SensorEventListener{
     private Camera mCamera;
     private SurfaceView mPreview;
     private MediaRecorder mMediaRecorder;
+    private SensorManager sm;
+    private Sensor accel, gyro, compass;
     private boolean isRecording = false;
     private String TAG = "MyCameraApp";
 
@@ -39,7 +46,11 @@ public class CameraActivity extends AppCompatActivity {
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
 
-
+        /* Get all available sensors */
+        sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        accel = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        gyro = sm.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        compass = sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
         // Add a listener to the Capture button
         final Button captureButton = (Button) findViewById(R.id.button_capture);
@@ -77,6 +88,42 @@ public class CameraActivity extends AppCompatActivity {
         );
     }
 
+    protected void onPause() {
+        sm.unregisterListener(this, accel);
+        sm.unregisterListener(this, gyro);
+        sm.unregisterListener(this, compass);
+        super.onPause();
+
+        releaseMediaRecorder();       // if you are using MediaRecorder, release it first
+        releaseCamera();              // release the camera immediately on pause event
+    }
+
+    protected void onResume() {
+        sm.registerListener(this, accel, SensorManager.SENSOR_DELAY_NORMAL);
+        sm.registerListener(this, gyro, SensorManager.SENSOR_DELAY_NORMAL);
+        sm.registerListener(this, compass, SensorManager.SENSOR_DELAY_NORMAL);
+        super.onResume();
+    }
+
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        System.out.println("Accel: Accuracy Changed");
+    }
+
+    public void onSensorChanged(SensorEvent event) {
+        float[] vals = {event.values[0], event.values[1], event.values[2]};
+        switch (event.sensor.getType()) {
+            case Sensor.TYPE_ACCELEROMETER:
+                System.out.println("Accel: " + "X: " + vals[0] + " Y: " + vals[1] + " Z: " + vals[2]);
+                break;
+            case Sensor.TYPE_GYROSCOPE:
+                System.out.println("Gyro: " + "X: " + vals[0] + " Y: " + vals[1] + " Z: " + vals[2]);
+                break;
+            case Sensor.TYPE_MAGNETIC_FIELD:
+                System.out.println("Compass: " + "X: " + vals[0] + " Y: " + vals[1] + " Z: " + vals[2]);
+                break;
+        }
+    }
+
     /** A safe way to get an instance of the Camera object. */
     public static Camera getCameraInstance(){
         Camera c = null;
@@ -89,12 +136,6 @@ public class CameraActivity extends AppCompatActivity {
         return c; // returns null if camera is unavailable
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        releaseMediaRecorder();       // if you are using MediaRecorder, release it first
-        releaseCamera();              // release the camera immediately on pause event
-    }
 
     private void releaseMediaRecorder(){
         if (mMediaRecorder != null) {
@@ -136,7 +177,7 @@ public class CameraActivity extends AppCompatActivity {
         //mMediaRecorder.setVideoSize(640,480);
         mMediaRecorder.setCaptureRate(60);
         mMediaRecorder.setMaxDuration(5000);
-        
+
         // Step 6: Prepare configured MediaRecorder
         try {
             mMediaRecorder.prepare();

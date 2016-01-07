@@ -20,6 +20,6 @@
         android:layout_below="@+id/textView1"
         android:layout_marginTop="26dp"
         android:layout_centerHorizontal="true"
-        android:text="Start Another Activity" />
+        android:text="Start Camera Activity" />
 
 </RelativeLayout>

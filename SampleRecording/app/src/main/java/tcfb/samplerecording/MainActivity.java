@@ -16,10 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import java.io.IOException;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener {
-    private SensorManager sm;
-    private Sensor accelerometer;
-    private Sensor accel, gyro, compass;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button btnStartAnotherActivity;
 
@@ -28,48 +25,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /* Get all available sensors */
-        sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        accel = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        gyro = sm.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        compass = sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-
         btnStartAnotherActivity = (Button) findViewById(R.id.btnStartAnotherActivity);
         btnStartAnotherActivity.setOnClickListener(this);
     }
 
-    protected void onPause() {
-        sm.unregisterListener(this, accel);
-        sm.unregisterListener(this, gyro);
-        sm.unregisterListener(this, compass);
-        super.onPause();
-    }
-
-    protected void onResume() {
-        sm.registerListener(this, accel, SensorManager.SENSOR_DELAY_NORMAL);
-        sm.registerListener(this, gyro, SensorManager.SENSOR_DELAY_NORMAL);
-        sm.registerListener(this, compass, SensorManager.SENSOR_DELAY_NORMAL);
-        super.onResume();
-    }
-
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        System.out.println("Accel: Accuracy Changed");
-    }
-
-    public void onSensorChanged(SensorEvent event) {
-        float[] vals = {event.values[0], event.values[1], event.values[2]};
-        switch (event.sensor.getType()) {
-            case Sensor.TYPE_ACCELEROMETER:
-                System.out.println("Accel: " + "X: " + vals[0] + " Y: " + vals[1] + " Z: " + vals[2]);
-                break;
-            case Sensor.TYPE_GYROSCOPE:
-                System.out.println("Gyro: " + "X: " + vals[0] + " Y: " + vals[1] + " Z: " + vals[2]);
-                break;
-            case Sensor.TYPE_MAGNETIC_FIELD:
-                System.out.println("Compass: " + "X: " + vals[0] + " Y: " + vals[1] + " Z: " + vals[2]);
-                break;
-        }
-    }
     @Override
     public void onClick(View view) {
 
