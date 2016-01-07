@@ -28,7 +28,7 @@ public class SensorPoll implements SensorEventListener {
     private BufferedWriter bw = null;
     private boolean start = false;
 
-    public SensorPoll(File appDir, long time) {
+    public SensorPoll(File appDir, long startTime) {
         this.startTime = startTime;
         this.appDir = appDir;
 
@@ -44,6 +44,8 @@ public class SensorPoll implements SensorEventListener {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+
+        System.out.println("----------------------> outFile " + outFile);
     }
 
     public void start() {
@@ -52,6 +54,12 @@ public class SensorPoll implements SensorEventListener {
 
     public void stop() {
         start = false;
+        try {
+            bw.flush();
+            bw.close();
+        } catch (Exception e) {
+
+        }
     }
 
     /* Returns last recorded acceleration measurement. Returns null if no measurement has been

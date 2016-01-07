@@ -23,11 +23,12 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class CameraActivity extends AppCompatActivity implements SensorEventListener{
+public class CameraActivity extends AppCompatActivity{
     private Camera mCamera;
     private SurfaceView mPreview;
     private MediaRecorder mMediaRecorder;
     private SensorManager sm;
+    private SensorPoll sp;
     private Sensor accel, gyro, compass;
     private boolean isRecording = false;
     private String TAG = "MyCameraApp";
@@ -48,6 +49,8 @@ public class CameraActivity extends AppCompatActivity implements SensorEventList
 
         /* Get all available sensors */
         sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sp = new SensorPoll(new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "MyCameraApp"),System.currentTimeMillis());
         accel = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gyro = sm.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         compass = sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
@@ -67,6 +70,7 @@ public class CameraActivity extends AppCompatActivity implements SensorEventList
                             // inform the user that recording has stopped
                             captureButton.setText("Capture");
                             isRecording = false;
+                            sp.stop();
                         } else {
                             // initialize video camera
                             if (prepareVideoRecorder()) {
@@ -77,11 +81,13 @@ public class CameraActivity extends AppCompatActivity implements SensorEventList
                                 // inform the user that recording has started
                                 captureButton.setText("Stop");
                                 isRecording = true;
+                                sp.start();
                             } else {
                                 // prepare didn't work, release the camera
                                 releaseMediaRecorder();
                                 // inform user
                             }
+
                         }
                     }
                 }
@@ -89,9 +95,9 @@ public class CameraActivity extends AppCompatActivity implements SensorEventList
     }
 
     protected void onPause() {
-        sm.unregisterListener(this, accel);
-        sm.unregisterListener(this, gyro);
-        sm.unregisterListener(this, compass);
+        sm.unregisterListener(sp, accel);
+        sm.unregisterListener(sp, gyro);
+        sm.unregisterListener(sp, compass);
         super.onPause();
 
         releaseMediaRecorder();       // if you are using MediaRecorder, release it first
@@ -99,29 +105,10 @@ public class CameraActivity extends AppCompatActivity implements SensorEventList
     }
 
     protected void onResume() {
-        sm.registerListener(this, accel, SensorManager.SENSOR_DELAY_NORMAL);
-        sm.registerListener(this, gyro, SensorManager.SENSOR_DELAY_NORMAL);
-        sm.registerListener(this, compass, SensorManager.SENSOR_DELAY_NORMAL);
+        sm.registerListener(sp, accel, SensorManager.SENSOR_DELAY_NORMAL);
+        sm.registerListener(sp, gyro, SensorManager.SENSOR_DELAY_NORMAL);
+        sm.registerListener(sp, compass, SensorManager.SENSOR_DELAY_NORMAL);
         super.onResume();
-    }
-
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        System.out.println("Accel: Accuracy Changed");
-    }
-
-    public void onSensorChanged(SensorEvent event) {
-        float[] vals = {event.values[0], event.values[1], event.values[2]};
-        switch (event.sensor.getType()) {
-            case Sensor.TYPE_ACCELEROMETER:
-                System.out.println("Accel: " + "X: " + vals[0] + " Y: " + vals[1] + " Z: " + vals[2]);
-                break;
-            case Sensor.TYPE_GYROSCOPE:
-                System.out.println("Gyro: " + "X: " + vals[0] + " Y: " + vals[1] + " Z: " + vals[2]);
-                break;
-            case Sensor.TYPE_MAGNETIC_FIELD:
-                System.out.println("Compass: " + "X: " + vals[0] + " Y: " + vals[1] + " Z: " + vals[2]);
-                break;
-        }
     }
 
     /** A safe way to get an instance of the Camera object. */
