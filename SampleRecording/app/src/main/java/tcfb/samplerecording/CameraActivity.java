@@ -6,10 +6,7 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
@@ -128,7 +125,7 @@ public class CameraActivity extends AppCompatActivity {
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
         // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
-        mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
+         mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
 
         // Step 4: Set output file
         mMediaRecorder.setOutputFile(getOutputMediaFile(MEDIA_TYPE_VIDEO).toString());
@@ -136,6 +133,10 @@ public class CameraActivity extends AppCompatActivity {
         // Step 5: Set the preview output
         mMediaRecorder.setPreviewDisplay(mPreview.getHolder().getSurface());
 
+        //mMediaRecorder.setVideoSize(640,480);
+        mMediaRecorder.setCaptureRate(60);
+        mMediaRecorder.setMaxDuration(5000);
+        
         // Step 6: Prepare configured MediaRecorder
         try {
             mMediaRecorder.prepare();
