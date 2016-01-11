@@ -122,11 +122,11 @@ public class LoginActivity extends AppCompatActivity {
                 System.err.println("WAWAWAWAWAWA");
                 e.printStackTrace();
             }
+
             String auth = credentials[0] + ":" + credentials[1];
             conn.setRequestProperty("Authorization", "Basic " +
                     Base64.encodeToString(auth.getBytes(), Base64.URL_SAFE));
-            System.out.println("===============\n" + conn.getRequestProperties().toString() + "\n--------------------");
-            System.out.println("request: " + Base64.encodeToString("Intern:temp371".getBytes(), Base64.NO_WRAP));
+
             conn.setConnectTimeout(30000);
             conn.setReadTimeout(30000);
             conn.setInstanceFollowRedirects(true);
@@ -140,8 +140,6 @@ public class LoginActivity extends AppCompatActivity {
                     case 200:   // OK
                         result = conn.getHeaderField("Set-Cookie");
                         result = result.substring(0, result.indexOf(';'));
-                        System.out.println(result);
-                        System.out.println("YAAAAY=============================");
                         break;
 
                     default:    // Some other non-OK response
