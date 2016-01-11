@@ -19,4 +19,5 @@ public class OpenGLView extends GLSurfaceView {
 		setRenderer(renderer);
 		setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 	}
+
 }
