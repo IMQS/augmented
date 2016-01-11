@@ -11,14 +11,12 @@ import java.io.IOException;
 /** A basic Camera preview class */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder mHolder;
-    private Camera mCamera;
-    private String TAG = "MyCameraApp";
+    private Camera camera;
+    private String TAG = "CameraPreview";
 
 
-    public CameraPreview(Context context, Camera camera) {
+    public CameraPreview(Context context) {
         super(context);
-        mCamera = camera;
-
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.
         mHolder = getHolder();
@@ -30,15 +28,20 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceCreated(SurfaceHolder holder) {
         // The Surface has been created, now tell the camera where to draw the preview.
         try {
-            mCamera.setPreviewDisplay(holder);
-            mCamera.startPreview();
+            this.camera = getCameraInstance();
+            camera.setPreviewDisplay(holder);
+            camera.startPreview();
         } catch (IOException e) {
             Log.d(TAG, "Error setting camera preview: " + e.getMessage());
         }
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
-        // empty. Take care of releasing the Camera preview in your activity.
+        // Surface will be destroyed when replaced with a new screen
+        // Always make sure to release the Camera instance
+        camera.stopPreview();
+        camera.release();
+        camera = null;
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
@@ -52,21 +55,36 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         // stop preview before making changes
         try {
-            mCamera.stopPreview();
+            camera.stopPreview();
         } catch (Exception e){
             // ignore: tried to stop a non-existent preview
         }
 
         // set preview size and make any resize, rotate or
         // reformatting changes here
+        camera.setDisplayOrientation(90);
+
 
         // start preview with new settings
         try {
-            mCamera.setPreviewDisplay(mHolder);
-            mCamera.startPreview();
+            camera.setPreviewDisplay(mHolder);
+            camera.startPreview();
 
         } catch (Exception e){
             Log.d(TAG, "Error starting camera preview: " + e.getMessage());
         }
     }
+    /**
+     * A safe way to get an instance of the Camera object.
+     */
+    public static Camera getCameraInstance() {
+        Camera c = null;
+        try {
+            c = Camera.open(); // attempt to get a Camera instance
+        } catch (Exception e) {
+            // Camera is not available (in use or does not exist)
+        }
+        return c; // returns null if camera is unavailable
+    }
+
 }
