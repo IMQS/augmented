@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/home/arjens/ASWorkspace/ARSimple/aRBaseLib/build/intermediates/res/merged/androidTest/debug/drawable-hdpi-v4/settings.png",
+        "source": "/home/arjens/ASWorkspace/ARSimple/aRBaseLib/build/intermediates/bundles/debug/res/drawable-hdpi-v4/settings.png"
+    },
+    {
+        "merged": "/home/arjens/ASWorkspace/augmented/SampleRecording/aRBaseLib/build/intermediates/res/merged/androidTest/debug/drawable-hdpi-v4/settings.png",
+        "source": "/home/arjens/ASWorkspace/augmented/SampleRecording/aRBaseLib/build/intermediates/bundles/debug/res/drawable-hdpi-v4/settings.png"
+    }
+]

@@ -1,1 +1,2 @@
+include ':aRBaseLib'
 include ':app'
