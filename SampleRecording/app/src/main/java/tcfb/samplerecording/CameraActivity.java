@@ -2,22 +2,24 @@ package tcfb.samplerecording;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import org.artoolkit.ar.base.ARActivity;
+import org.artoolkit.ar.base.rendering.ARRenderer;
 
 
-public class CameraActivity extends AppCompatActivity {
+public class CameraActivity extends ARActivity {
 
     CameraPreview cameraPreview;
     OpenGLView openGLView;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         //make fullscreen
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        //        WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
@@ -28,21 +30,29 @@ public class CameraActivity extends AppCompatActivity {
         show3D();
     }
 
-    protected void onPause() {
-        super.onPause();
+    /**
+     * Provide our own SimpleRenderer.
+     */
+    @Override
+    protected ARRenderer supplyRenderer() {
+        return new OpenGLRenderer();
     }
 
-    protected void onResume() {
-        super.onResume();
+    /**
+     * Use the FrameLayout in this Activity's UI.
+     */
+    @Override
+    protected FrameLayout supplyFrameLayout() {
+        return (FrameLayout)this.findViewById(R.id.camera_rect);
     }
 
     void show3D() {
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_rect);
         if (preview.getChildCount() == 0) {
-            cameraPreview = new CameraPreview(this);
-            openGLView = new OpenGLView(this);
-            preview.addView(openGLView);
-            preview.addView(cameraPreview);
+           // cameraPreview = new CameraPreview(this);
+           // openGLView = new OpenGLView(this);
+           // preview.addView(openGLView);
+           // preview.addView(cameraPreview);
         }
         else {
             preview.removeAllViews();

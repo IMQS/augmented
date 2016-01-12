@@ -4,14 +4,12 @@ package tcfb.samplerecording;
  * Created by erik on 2016/01/08.
  */
 
-import android.opengl.GLSurfaceView;
-import android.opengl.GLSurfaceView.Renderer;
+import org.artoolkit.ar.base.rendering.ARRenderer;
 import android.opengl.GLU;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class OpenGLRenderer implements GLSurfaceView.Renderer {
+public class OpenGLRenderer extends ARRenderer {
     /*
      * (non-Javadoc)
      *
