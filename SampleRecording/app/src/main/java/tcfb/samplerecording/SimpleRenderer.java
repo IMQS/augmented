@@ -89,7 +89,7 @@ public class SimpleRenderer extends ARRenderer {
 	
 		gl.glEnable(GL10.GL_CULL_FACE);
         gl.glShadeModel(GL10.GL_SMOOTH);
-        gl.glEnable(GL10.GL_DEPTH_TEST);        
+        gl.glEnable(GL10.GL_DEPTH_TEST);
     	gl.glFrontFace(GL10.GL_CW);
     			
 		// If the marker is visible, apply its transformation, and draw a cube
