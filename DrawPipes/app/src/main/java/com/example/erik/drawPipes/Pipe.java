@@ -32,10 +32,16 @@ public class Pipe extends Asset {
 		this.cylinder.set_rotation(0, 0, angle);
 
 		float x = coords_to_meters(new double[]{myGPS[0], myGPS[1], 0}, new double[]{coord[0], myGPS[1], 0});
-		float y = coords_to_meters(new double[]{myGPS[0], myGPS[1], 0}, new double[]{myGPS[0], coord[1], 0});
-		float z = 0;
+		if (myGPS[0] > coord[0]) {
+			x *= -1;
+		}
 
-//		System.out.println(x + "");
+		float y = coords_to_meters(new double[]{myGPS[0], myGPS[1], 0}, new double[]{myGPS[0], coord[1], 0});
+		if (myGPS[1] > coord[1]) {
+			y *= -1;
+		}
+
+		float z = 0;
 
 		this.cylinder.set_translation(x, y, z);
 	}
