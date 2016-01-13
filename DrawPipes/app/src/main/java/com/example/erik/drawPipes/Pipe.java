@@ -26,7 +26,7 @@ public class Pipe extends Asset {
 		this.poly_type = poly_type;
 
 		this.length = coords_to_meters(start_coord, end_coord);
-		this.angle = (float) Math.atan((start_coord[1] - end_coord[1]) / (start_coord[0] - end_coord[0])) * 50cd im;
+		this.angle = (float) Math.toDegrees(Math.atan((start_coord[1] - end_coord[1]) / (start_coord[0] - end_coord[0])));
 
 		this.cylinder = new Cylinder(length, 0.2f, 16);
 		this.cylinder.set_rotation(0, 0, angle);
