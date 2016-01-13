@@ -4,6 +4,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import java.util.ArrayList;
+
 /**
  * Created by fritzonfire on 1/13/16.
  */
@@ -21,40 +23,46 @@ public class IMQS_Parser {
 
 	private Pipe[] parseJSON(String unparsed) {
 		JSONParser parser = new JSONParser();
+		ArrayList<Pipe> pipeList = new ArrayList<Pipe>();
 
 		try {
+			System.out.println(unparsed);
+
 			Object obj = parser.parse("[" + unparsed + "]");
 			JSONArray array = (JSONArray) obj;
 
 			String temp = ((JSONObject) array.get(1)).get("Tables").toString();
 			String data[] = temp.split("v\":\\[\\[");
 
-			this.pipes = new Pipe[data.length - 1];
-
 			for (int i = 0; i < data.length - 1; i++) {
 				String item = data[i + 1];
 				String gps[] = item.split(",");
 
-				double x = Double.parseDouble(gps[0]);
-				double y = Double.parseDouble(gps[1]);
-				double z = 0;
+				int j = 0;
+				do {
+					double x = Double.parseDouble(gps[j]);
+					double y = Double.parseDouble(gps[j + 1]);
+					double z = 0;
+					double start[] = {x, y, z};
 
-				double start[] = {x, y, z};
+					j += 3;
 
-				x = Double.parseDouble(gps[3]);
-				y = Double.parseDouble(gps[4]);
-				z = 0;
+					x = Double.parseDouble(gps[j]);
+					y = Double.parseDouble(gps[j + 1]);
+					z = 0;
+					double end[] = {x, y, z};
 
-				double end[] = {x, y, z};
-
-				String polyline = data[i + 1].split("\"t\":\"")[1].substring(0, 3);
-
-				this.pipes[i] = new Pipe(start, end, polyline);
+					pipeList.add(new Pipe(start, end));
+				} while (!gps[j + 2].startsWith("0.0]]"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return pipes;
+		this.pipes = new Pipe[pipeList.size()];
+		for (int i = 0; i < this.pipes.length; i++) {
+			this.pipes[i] = pipeList.get(i);
+		}
+		return this.pipes;
 	}
 }

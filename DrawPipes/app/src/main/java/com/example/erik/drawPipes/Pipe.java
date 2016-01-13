@@ -10,9 +10,8 @@ public class Pipe extends Asset {
 	private float length;
 	private float angle;
 	private Cylinder cylinder;
-	private String poly_type;
 
-	public Pipe(double[] start_coord, double[] end_coord, String poly_type) {
+	public Pipe(double[] start_coord, double[] end_coord) {
 		this.start_coord = start_coord;
 		this.end_coord = end_coord;
 
@@ -23,12 +22,10 @@ public class Pipe extends Asset {
 
 		set_coord(coord);
 
-		this.poly_type = poly_type;
-
 		this.length = coords_to_meters(start_coord, end_coord);
 		this.angle = (float) Math.toDegrees(Math.atan((start_coord[1] - end_coord[1]) / (start_coord[0] - end_coord[0])));
 
-		this.cylinder = new Cylinder(length, 0.2f, 16);
+		this.cylinder = new Cylinder(length, 1.0f, 16);
 		this.cylinder.set_rotation(0, 0, angle);
 
 		float x = coords_to_meters(new double[]{myGPS[0], myGPS[1], 0}, new double[]{coord[0], myGPS[1], 0});
@@ -56,10 +53,6 @@ public class Pipe extends Asset {
 		double d = 6367 * c * 1000;
 
 		return (float) d;
-	}
-
-	public String get_poly_type() {
-		return poly_type;
 	}
 
 	public Cylinder get_Cylinder() {

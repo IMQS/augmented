@@ -188,7 +188,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
         gl.glLoadIdentity();
         // Translates 10 units into the screen.
-        gl.glTranslatef(0,0, -1000f);
+        gl.glTranslatef(0,0, -800f);
 //        gl.glRotatef((float)Math.PI/2, 0, 0f, 1f);
 
 //        cube.setColor(1,0,0.5f,1);
