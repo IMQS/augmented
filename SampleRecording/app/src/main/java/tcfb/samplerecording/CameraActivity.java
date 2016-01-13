@@ -24,7 +24,7 @@ public class CameraActivity extends ARActivity {
     }
 
     /**
-     * Provide our own SimpleRenderer.
+     * Provide our own Renderer.
      */
     @Override
     protected ARRenderer supplyRenderer() {

@@ -6,8 +6,7 @@ package tcfb.samplerecording;
 
 import org.artoolkit.ar.base.ARToolKit;
 import org.artoolkit.ar.base.rendering.ARRenderer;
-import android.opengl.GLU;
-import javax.microedition.khronos.egl.EGLConfig;
+import org.artoolkit.ar.base.rendering.Cube;
 import javax.microedition.khronos.opengles.GL10;
 
 public class OpenGLRenderer extends ARRenderer {
@@ -26,6 +25,7 @@ public class OpenGLRenderer extends ARRenderer {
 
     private int markerID = -1;
     Square square;
+    private Cube cube = new Cube(40.0f, 0.0f, 0.0f, 20.0f);
     public OpenGLRenderer() {
         square = new Square();
     }
@@ -62,10 +62,19 @@ public class OpenGLRenderer extends ARRenderer {
         // If the marker is visible, apply its transformation, and draw a cube
         if (ARToolKit.getInstance().queryMarkerVisible(markerID)) {
             gl.glMatrixMode(GL10.GL_MODELVIEW);
+            //Log.v(TAG, ARToolKit.getInstance().queryMarkerTransformation(markerID)[0] + " " + ARToolKit.getInstance().queryMarkerTransformation(markerID)[1] + " " + ARToolKit.getInstance().queryMarkerTransformation(markerID)[2] + " " + ARToolKit.getInstance().queryMarkerTransformation(markerID)[3]+ " " + ARToolKit.getInstance().queryMarkerTransformation(markerID)[4]);
             gl.glLoadMatrixf(ARToolKit.getInstance().queryMarkerTransformation(markerID), 0);
-            square.draw(gl);
+            //square.draw(gl);
+            cube.draw(gl);
         }
-
     }
-
+    public static float[] transpose(float[]m) {
+        float[] result = new float[16];
+        for (int i=0;i<4;i++) {
+            for (int j = 0; j < 4; j++) {
+                result[j * 4 + i] = m[i * 4 + j];
+            }
+        }
+        return result;
+    }
 }
