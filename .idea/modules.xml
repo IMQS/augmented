@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/SampleRecording/aRBaseLib/build/generated/source/buildConfig/androidTest/androidTest.iml" filepath="$PROJECT_DIR$/SampleRecording/aRBaseLib/build/generated/source/buildConfig/androidTest/androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SampleRecording/aRBaseLib/build/generated/source/r/androidTest/androidTest1.iml" filepath="$PROJECT_DIR$/SampleRecording/aRBaseLib/build/generated/source/r/androidTest/androidTest1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SampleRecording/aRBaseLib/build/generated/source/buildConfig/buildConfig.iml" filepath="$PROJECT_DIR$/SampleRecording/aRBaseLib/build/generated/source/buildConfig/buildConfig.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SampleRecording/aRBaseLib/build/intermediates/bundles/debug/debug.iml" filepath="$PROJECT_DIR$/SampleRecording/aRBaseLib/build/intermediates/bundles/debug/debug.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SampleRecording/aRBaseLib/build/intermediates/manifest/androidTest/debug/debug.iml" filepath="$PROJECT_DIR$/SampleRecording/aRBaseLib/build/intermediates/manifest/androidTest/debug/debug.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SampleRecording/aRBaseLib/src/main/main.iml" filepath="$PROJECT_DIR$/SampleRecording/aRBaseLib/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SampleRecording/app/src/main/main1.iml" filepath="$PROJECT_DIR$/SampleRecording/app/src/main/main1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SampleRecording/aRBaseLib/build/generated/source/r/r.iml" filepath="$PROJECT_DIR$/SampleRecording/aRBaseLib/build/generated/source/r/r.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SampleRecording/aRBaseLib/build/intermediates/bundles/release/release.iml" filepath="$PROJECT_DIR$/SampleRecording/aRBaseLib/build/intermediates/bundles/release/release.iml" />
+    </modules>
+  </component>
+</project>

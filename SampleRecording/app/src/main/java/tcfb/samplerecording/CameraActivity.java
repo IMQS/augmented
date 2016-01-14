@@ -10,17 +10,8 @@ public class CameraActivity extends ARActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        //make fullscreen
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-        //        WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
-
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
     }
 
     /**
@@ -38,6 +29,4 @@ public class CameraActivity extends ARActivity {
     protected FrameLayout supplyFrameLayout() {
         return (FrameLayout)this.findViewById(R.id.camera_rect);
     }
-
-
 }

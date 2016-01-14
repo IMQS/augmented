@@ -1,25 +1,11 @@
 package tcfb.samplerecording;
 
-/**
- * Created by erik on 2016/01/08.
- */
-
 import org.artoolkit.ar.base.ARToolKit;
 import org.artoolkit.ar.base.rendering.ARRenderer;
 import org.artoolkit.ar.base.rendering.Cube;
 import javax.microedition.khronos.opengles.GL10;
 
 public class OpenGLRenderer extends ARRenderer {
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.
-         * microedition.khronos.opengles.GL10, javax.microedition.khronos.
-         * egl.EGLConfig)
-     */
-
-
 
     public static String TAG = "OverlayRenderer";
 
@@ -64,17 +50,9 @@ public class OpenGLRenderer extends ARRenderer {
             gl.glMatrixMode(GL10.GL_MODELVIEW);
             //Log.v(TAG, ARToolKit.getInstance().queryMarkerTransformation(markerID)[0] + " " + ARToolKit.getInstance().queryMarkerTransformation(markerID)[1] + " " + ARToolKit.getInstance().queryMarkerTransformation(markerID)[2] + " " + ARToolKit.getInstance().queryMarkerTransformation(markerID)[3]+ " " + ARToolKit.getInstance().queryMarkerTransformation(markerID)[4]);
             gl.glLoadMatrixf(ARToolKit.getInstance().queryMarkerTransformation(markerID), 0);
+            gl.glPushMatrix();
             //square.draw(gl);
             cube.draw(gl);
         }
-    }
-    public static float[] transpose(float[]m) {
-        float[] result = new float[16];
-        for (int i=0;i<4;i++) {
-            for (int j = 0; j < 4; j++) {
-                result[j * 4 + i] = m[i * 4 + j];
-            }
-        }
-        return result;
     }
 }
