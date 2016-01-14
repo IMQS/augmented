@@ -1,5 +1,7 @@
-package com.example.erik.gl10tutorial;
+package com.example.erik.drawPipes;
 
+
+import com.example.erik.drawPipes.Mesh;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
