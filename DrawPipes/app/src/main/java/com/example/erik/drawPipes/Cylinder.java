@@ -1,6 +1,5 @@
-package com.example.erik.drawPipes;
+package com.example.erik.gl10tutorial;
 
-import com.example.erik.drawPipes.Mesh;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -48,12 +47,12 @@ public class Cylinder extends Mesh {
 			indices[j++] = (short) (i + 1);    // of pipe.
 			indices[j++] = (short) (i + 2);
 
-			indices[j++] = (short) (segments + 1);        // Create Triangel on end
+			indices[j++] = (short) (segments + i + 3);        // Create Triangel on end
 			indices[j++] = (short) (segments + i + 2);    // of pipe.
-			indices[j++] = (short) (segments + i + 3);
+			indices[j++] = (short) (segments + 1);
 
-			indices[j++] = (short) (i + segments + 1);        // Create Triangle between
-			indices[j++] = (short) (i + 1);        // the top two points of the
+			indices[j++] = (short) (i + 1);        // Create Triangle between
+			indices[j++] = (short) (i + segments + 2);        // the top two points of the
 			indices[j++] = (short) (i + 2);    // start triangle and one top
 			// point of the end triangle
 
@@ -67,9 +66,9 @@ public class Cylinder extends Mesh {
 		indices[j++] = (short) segments;    // vertice on the start of the pipe and the second
 		indices[j++] = 1;        // vertice.
 
-		indices[j++] = (short) (segments + 1);        // Create a Triangle on the end of
+		indices[j++] = (short) (segments + 2);        // Create a Triangle on the end of
 		indices[j++] = (short) (segments + i + 2);    // the pipe using the last vertice
-		indices[j++] = (short) (segments + 2);        // and the second vertice on the end
+		indices[j++] = (short) (segments + 1);        // and the second vertice on the end
 		// of the pipe
 
 		indices[j++] = (short) (segments + i + 2);        // Create a triangle between the top
