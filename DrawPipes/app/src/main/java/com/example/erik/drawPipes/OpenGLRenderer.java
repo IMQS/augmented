@@ -273,7 +273,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
             p = pipes[i];
             c = p.get_Cylinder();
             c.setColor(Hex2float.parseHex(ColourUtil.getNextColour()));
-            c.setCullEnabled(false);
             g.add(c);
         }
     }

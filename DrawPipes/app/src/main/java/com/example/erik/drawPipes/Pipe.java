@@ -25,7 +25,7 @@ public class Pipe extends Asset {
 		this.length = coords_to_meters(start_coord, end_coord);
 		this.angle = (float) Math.toDegrees(Math.atan((start_coord[1] - end_coord[1]) / (start_coord[0] - end_coord[0])));
 
-		this.cylinder = new Cylinder(length, 1.0f, 16);
+		this.cylinder = new Cylinder(length, 1.0f, 4);
 		this.cylinder.set_rotation(0, 0, angle);
 
 		float x = coords_to_meters(new double[]{myGPS[0], myGPS[1], 0}, new double[]{coord[0], myGPS[1], 0});
