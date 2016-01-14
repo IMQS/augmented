@@ -13,15 +13,15 @@ public class IMQS_Parser {
 
 	private Pipe[] pipes;
 
-	public IMQS_Parser(String data) {
-		parseJSON(data);
+	public IMQS_Parser(String data, double myLat, double myLong) {
+		parseJSON(data, myLat, myLong);
 	}
 
 	public Pipe[] get_Pipes() {
 		return this.pipes;
 	}
 
-	private Pipe[] parseJSON(String unparsed) {
+	private Pipe[] parseJSON(String unparsed, double myLat, double myLong) {
 		JSONParser parser = new JSONParser();
 		ArrayList<Pipe> pipeList = new ArrayList<Pipe>();
 
@@ -52,7 +52,7 @@ public class IMQS_Parser {
 					z = 0;
 					double end[] = {x, y, z};
 
-					pipeList.add(new Pipe(start, end));
+					pipeList.add(new Pipe(start, end, myLat, myLong));
 				} while (!gps[j + 2].startsWith("0.0]]"));
 			}
 		} catch (Exception e) {

@@ -13,9 +13,9 @@ public class Pipe extends Asset {
 	private float angle;
 	private Cylinder cylinder;
 
-	public Pipe(double[] start_coord, double[] end_coord) {
-		this.myGPS.setLatitude(-33.96500441);
-		this.myGPS.setLongitude(18.83744091);
+	public Pipe(double[] start_coord, double[] end_coord, double myLat, double myLong) {
+		this.myGPS.setLatitude(myLat);
+		this.myGPS.setLongitude(myLong);
 		this.start_coord = start_coord;
 		this.end_coord = end_coord;
 

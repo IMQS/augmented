@@ -3,6 +3,8 @@
     package="com.example.erik.drawPipes">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -22,7 +24,7 @@
         </activity>
         <activity
             android:name="com.example.erik.drawPipes.ARActivity"
-            android:label="@string/title_activity_json"
+            android:label="ar_activity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

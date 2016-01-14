@@ -1,9 +1,16 @@
 package com.example.erik.drawPipes;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,18 +29,23 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.jar.Manifest;
 
 public class LoginActivity extends AppCompatActivity {
 
+	private Location myGPS = null;
+	private double radius = 10.1; // km
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		final Button login_btn;
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
-
-		Button login_btn = (Button) findViewById(R.id.login_button);
+		login_btn = (Button) findViewById(R.id.login_button);
 		login_btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
 				EditText mUN = (EditText) findViewById(R.id.edit_un);
@@ -61,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
 						e.printStackTrace();
 					}
 
-					startJsonActivity(answer);
+					startARActivity(answer);
 				} else if (answer.startsWith("error=")) {
 					int code = Integer.parseInt(answer.split("=")[1]);
 
@@ -76,6 +88,33 @@ public class LoginActivity extends AppCompatActivity {
 				}
 			}
 		});
+		login_btn.setEnabled(false);
+
+		if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == -1) {
+			return;
+		}
+
+		// Acquire a reference to the system Location Manager
+		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+		// Define a listener that responds to location updates
+		LocationListener locationListener = new LocationListener() {
+			public void onLocationChanged(Location location) {
+				// Called when a new location is found by the network location provider.
+				myGPS = new Location(location);
+				System.out.println("************* Location Update ************");
+				login_btn.setEnabled(true);
+			}
+
+			public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+			public void onProviderEnabled(String provider) {}
+
+			public void onProviderDisabled(String provider) {}
+		};
+
+		// Register the listener with the Location Manager to receive location updates
+		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 	}
 
 	private void makeAlert(String title, String msg) {
@@ -90,9 +129,11 @@ public class LoginActivity extends AppCompatActivity {
 				.show();
 	}
 
-	private void startJsonActivity(String data) {
+	private void startARActivity(String data) {
 		Intent intent = new Intent(this, ARActivity.class);
 		intent.putExtra("DATA", data);
+		intent.putExtra("Lat", myGPS.getLatitude());
+		intent.putExtra("Long", myGPS.getLongitude());
 		startActivity(intent);
 	}
 
@@ -172,6 +213,8 @@ public class LoginActivity extends AppCompatActivity {
 		protected String doInBackground(String... details) {
 			HttpURLConnection conn;
 
+			System.out.println("Latitude " + myGPS.getLatitude() + " Long" + myGPS.getLongitude());
+
 			try {
 				conn = (HttpURLConnection) new URL("http://uat.imqs.co.za/db/1/generic/pull").openConnection();
 				conn.setRequestMethod("POST");
@@ -184,12 +227,18 @@ public class LoginActivity extends AppCompatActivity {
 			conn.setRequestProperty("Cookie", "session=" + details[0]);
 			conn.setRequestProperty("Content-Type", "text/plain");
 
+			double yradius = radius / 110.54;
+			double xradius = radius / (111.32 * Math.cos(yradius));
 			try {
 				String query = "{\"Tables\":{\"g_table_6\":{\"SpatialBoxes\":" +
-						"[[[18.8360595703125,-33.96614226559744,18.837432861328125,-33.96500329452543],0]," +
-						"[[18.837432861328125,-33.96614226559744,18.83880615234375,-33.96500329452543],0]," +
-						"[[18.8360595703125,-33.96500329452543,18.837432861328125,-33.96386430820155],0]," +
-						"[[18.837432861328125,-33.96500329452543,18.83880615234375,-33.96386430820155],0]]" +
+						"[[[" + (myGPS.getLongitude() - xradius) + "," + (myGPS.getLatitude() - yradius) +
+						"," + myGPS.getLongitude() + "," + myGPS.getLatitude() + "],0]," +
+						"[[" + myGPS.getLongitude() + "," + (myGPS.getLatitude() - yradius) +
+						"," + (myGPS.getLongitude() + xradius) + "," + myGPS.getLatitude() + "],0]," +
+						"[[" + (myGPS.getLongitude() - xradius) + "," + myGPS.getLatitude() + "," +
+						myGPS.getLongitude() + "," + (myGPS.getLatitude() + yradius) + "],0]," +
+						"[[" + myGPS.getLongitude() + "," + myGPS.getLatitude() + "," +
+						(myGPS.getLongitude() + xradius) + "," + (myGPS.getLatitude() + yradius) + "],0]]" +
 						",\"IncludeFields\":[\"rowid\",\"Geometry\"]}}}";
 
 				byte[] queryInBytes = query.getBytes("UTF-8");
