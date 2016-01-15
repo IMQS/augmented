@@ -34,7 +34,7 @@ import java.util.jar.Manifest;
 public class LoginActivity extends AppCompatActivity {
 
 	private Location myGPS = null;
-	private double radius = 10.1; // km
+	private double radius = 0.2; // km
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +95,7 @@ public class LoginActivity extends AppCompatActivity {
 		}
 
 		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
 		// Define a listener that responds to location updates
 		LocationListener locationListener = new LocationListener() {
@@ -114,7 +114,7 @@ public class LoginActivity extends AppCompatActivity {
 		};
 
 		// Register the listener with the Location Manager to receive location updates
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10, 0, locationListener);
 	}
 
 	private void makeAlert(String title, String msg) {

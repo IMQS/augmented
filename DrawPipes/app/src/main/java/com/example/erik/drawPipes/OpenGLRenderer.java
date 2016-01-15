@@ -125,103 +125,13 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
         // Clears the screen and depth buffer.
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-//        // Replace the current matrix with the identity matrix
-//        gl.glLoadIdentity();
-//        // Translates 10 units into the screen.
-//        gl.glTranslatef(0, 0, -10);
-//
-//        // SQUARE A
-//        // Save the current matrix.
-//        gl.glPushMatrix();
-//        // Rotate square A counter-clockwise.
-//        gl.glRotatef(angle, 0, 0, 1);
-//        // Draw square A.
-//        square.draw(gl);
-//        // Restore the last matrix.
-//        gl.glPopMatrix();
-//
-//        // SQUARE B
-//        // Save the current matrix
-//        gl.glPushMatrix();
-//        // Rotate square B before moving it, making it rotate around A.
-//        gl.glRotatef(-angle, 0, 0, 1);
-//        // Move square B.
-//        gl.glTranslatef(2, 0, 0);
-//        // Scale it to 50% of square A
-//        gl.glScalef(.5f, .5f, .5f);
-//        // Draw square B.
-//        square.draw(gl);
-//
-//        // SQUARE C
-//        // Save the current matrix
-//        gl.glPushMatrix()Group;
-//        // Make the rotation around B
-//        gl.glRotatef(-angle, 0, 0, 1);
-//        gl.glTranslatef(2, 0, 0);
-//        // Scale it to 50% of square B
-//        gl.glScalef(.5f, .5f, .5f);
-//        // Rotate around it's own center.
-//        gl.glRotatef(angle*10, 0, 0, 1);
-//        // Draw square C.
-//        square.draw(gl);
-//
-//        // Restore to the matrix as it was before C.
-//        gl.glPopMatrix();
-//        // Restore to the matrix as it was before B.
-//        gl.glPopMatrix();
-//
-//        // Increse the angle.
-//        angle++;
-
-
-//        gl.glLoadIdentity();
-//        // Translates 7 units into the screen and 1.5 units up.
-//        gl.glTranslatef(0, 1.5f, -7);
-//        // Draw our flat square.
-//        flatSquare.draw(gl);
-//
-//        // Translate to end up under the flat square.
-//        gl.glTranslatef(0, -3f, 0);
-//        // Draw our smooth square.
-//        smoothSquare.draw(gl);
-
 
         gl.glLoadIdentity();
         // Translates 10 units into the screen.
         gl.glTranslatef(0,0, -800f);
-//        gl.glRotatef((float)Math.PI/2, 0, 0f, 1f);
 
-//        cube.setColor(1,0,0.5f,1);
-//        cube.rotate(angle, 0.5f * angle, 0.25f*angle);
-//        cube.rotate(1, 0.5f, 0.25f);
-//        cube.draw(gl);
-//
-//        plane.rotate(1, 0, 0);
-//        plane.draw(gl);
-        //angle++;
-
-//        lookout += look_speed;
-//        if (lookout > 2f) look_speed = -0.1f;
-//        else if (lookout < -2f) look_speed = 0.11f;
-//
-//        GLU.gluLookAt(gl, 0, 0, -20, lookout, lookout, 0, 0, 0, 1);
-//        world.draw(gl);
-//        cube_a.rotate(1,0,0);
-//        cube_b.rotate(0,1,0);
-//        cube_c.rotate(0,0,1);
-//        cube_d.rotate(1,0,1);
-
-//        pipe.rotate(0.25f, 0.125f, 1f);
-//        pipe.draw(gl);
-
-//        GLU.gluLookAt(gl,0,10,50,0,0,0,0,1,0);
-//        gl.glRotatef(3*angle, 1, 0, 0);
-//        gl.glRotatef(2*angle, 1, 0, 0);
-//        gl.glRotatef(angle, 0, 0, 1);
-//        angle += 0.05;
         g.draw(gl);
         plane.draw(gl);
-
     }
 
     /*
@@ -232,22 +142,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
          * microedition.khronos.opengles.GL10, int, int)
      */
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-//        // Sets the current view port to the new size.
-//        gl.glViewport(0, 0, width, height);
-//        // Select the projection matrix
-//        gl.glMatrixMode(GL10.GL_PROJECTION);
-//        // Reset the projection matrix
-//        gl.glLoadIdentity();
-//        // Calculate the aspect ratio of the window
-//        GLU.gluPerspective(gl, 45.0f,
-//                (float) width / (float) height,
-//                0.1f, 100.0f);
-        ////////GLU.gluPerspective(gl, 60, 1, 0.1f, 1000.0f );
-//        // Select the modelview matrix
-//        gl.glMatrixMode(GL10.GL_MODELVIEW);
-//        // Reset the modelview matrix
-//        gl.glLoadIdentity();
-
         if (height == 0)
             height = 1; // To prevent divide by zero
         float aspect = (float) width / height;
@@ -263,7 +157,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
         gl.glMatrixMode(GL10.GL_MODELVIEW); // Select model-view matrix
         gl.glLoadIdentity(); // Reset
-
     }
 
     public void setPipes(Pipe[] pipes) {
