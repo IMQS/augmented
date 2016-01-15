@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -32,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
 
 	private Location myGPS = null;
 	private double radius = 0.2; // km
+	private static final String TAG = "LoginActivity";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -216,7 +216,7 @@ public class LoginActivity extends AppCompatActivity {
 				conn = (HttpURLConnection) new URL("http://uat.imqs.co.za/db/1/generic/pull").openConnection();
 				conn.setRequestMethod("POST");
 			} catch (Exception e) {
-				System.err.println("!!!!!!!!!!!!!!!!!!!\nCan not connect to server\n!!!!!!!!!!!!!!!");
+				Log.v(TAG, "Can not connect to server");
 				e.printStackTrace();
 				return null;
 			}
@@ -243,8 +243,7 @@ public class LoginActivity extends AppCompatActivity {
 				os.write(queryInBytes);
 				os.close();
 			} catch (Exception e) {
-				System.err.println("!!!!!!!!!!!!!!!!!!!!\nConnection outputStream has caused an error"
-						+ "\n!!!!!!!!!!!!!!!!!!!!!!");
+				Log.v(TAG, "Connection outputStream has caused an error");
 				e.printStackTrace();
 				return null;
 			}
@@ -267,13 +266,13 @@ public class LoginActivity extends AppCompatActivity {
 					while ((line = reader.readLine()) != null) {
 						result += line;
 					}
-					System.out.println("Finished storing json in sting.");
+					Log.v(TAG, "Finished storing json in sting.");
 				} else {
 					result = "error=" + conn.getResponseCode();
 				}
 
 			} catch (Exception e) {
-				System.err.println("!!!!!!!!!!!!!!!!!!\nCan not POST data\n!!!!!!!!!!!!!!!!!");
+				Log.e(TAG, "Can not POST data");
 				e.printStackTrace();
 			}
 

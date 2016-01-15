@@ -5,13 +5,9 @@ package com.example.erik.SensorPipes;
  */
 
 import android.opengl.GLSurfaceView;
-
-
-        import javax.microedition.khronos.egl.EGLConfig;
-        import javax.microedition.khronos.opengles.GL10;
-
-        import android.opengl.GLU;
-
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+import android.opengl.GLU;
 import com.example.erik.SensorPipes.geometry.SmoothColoredSquare;
 import com.example.erik.SensorPipes.geometry.Cylinder;
 import com.example.erik.SensorPipes.geometry.FlatColoredSquare;
@@ -24,32 +20,22 @@ import com.example.erik.SensorPipes.utilities.Hex2float;
 import com.example.erik.SensorPipes.utilities.Pipe;
 
 public class OpenGLRenderer implements GLSurfaceView.Renderer {
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.
-         * microedition.khronos.opengles.GL10, javax.microedition.khronos.
-         * egl.EGLConfig)
-     */
 
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
 
-	OrientationProvider orient;
+    OrientationProvider orient;
 
     FlatColoredSquare flatSquare = new FlatColoredSquare();
     SmoothColoredSquare smoothSquare = new SmoothColoredSquare();
 
     Plane plane;
-	float angle = 0;
+	  float angle = 0;
     Group g = new Group();
 
-
     public OpenGLRenderer() {
-
         plane = new Plane(2,2);
         plane.setColor(1f, 1f, 1f, 1f);
     }
@@ -70,55 +56,29 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 				GL10.GL_NICEST);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * android.opengl.GLSurfaceView.Renderer#onDrawFrame(javax.
-         * microedition.khronos.opengles.GL10)
-     */
     public void onDrawFrame(GL10 gl) {
         // Clears the screen and depth buffer.
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
         gl.glLoadIdentity();
-        // Translates 10 units into the screen.
-//        gl.glTranslatef(0,0, -800f);
 
-//        GLU.gluLookAt(gl,0,0,5, 1,0,0, 0,1,1);
+		    /**For some reason, if you first translate, THEN rotate, the camera moves along
+		    * the XY plane as well.
+		    * TODO: figure out why
+		    */
 
-		/**For some reason, if you first translate, THEN rotate, the camera moves along
-		 * the XY plane as well.
-		 * TODO: figure out why
-		 */
+		   // Get the rotation from the current orientationProvider as quaternion
+		    Quaternion q = orient.getQuaternion();
+		    gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI), q.getX(), q.getY(), q.getZ());
 
-//		//make the camera look at the horizon
-//		gl.glRotatef(-80, 1, 0, 0);
-//
-//
-//		// rotate about the Z-axis
-//		gl.glRotatef(angle, 0,0,1);
-//		angle += 0.1f;
+		    //move the camera up a bit
+		    gl.glTranslatef(0, 0, -3);
 
-		// Get the rotation from the current orientationProvider as quaternion
-		Quaternion q = orient.getQuaternion();
-		gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI), q.getX(), q.getY(), q.getZ());
-
-		//move the camera up a bit
-		gl.glTranslatef(0, 0, -3);
-
-		//draw the group of all pipes
+		    //draw the group of all pipes
         g.draw(gl);
         plane.draw(gl);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * android.opengl.GLSurfaceView.Renderer#onSurfaceChanged(javax.
-         * microedition.khronos.opengles.GL10, int, int)
-     */
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         if (height == 0)
             height = 1; // To prevent divide by zero
