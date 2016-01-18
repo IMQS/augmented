@@ -69,7 +69,13 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
 		   // Get the rotation from the current orientationProvider as quaternion
 		    Quaternion q = orient.getQuaternion();
-		    gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI), q.getX(), q.getY(), q.getZ());
+
+            //TODO:
+            //use the following rotation if the app is in portrait mode
+//		    gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI), q.getX(), q.getY(), q.getZ());
+
+            // For landscape mode, we need to swap the X and Y axes, and invert the new X axis.
+            gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI), -1*q.getY(), q.getX(), q.getZ());
 
 		    //move the camera up a bit
 		    gl.glTranslatef(0, 0, -3);
