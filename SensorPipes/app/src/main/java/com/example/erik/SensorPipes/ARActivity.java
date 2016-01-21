@@ -2,11 +2,14 @@ package com.example.erik.SensorPipes;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 
 import com.example.erik.SensorPipes.orientationProvider.ImprovedOrientationSensor1Provider;
 import com.example.erik.SensorPipes.orientationProvider.OrientationProvider;
@@ -17,6 +20,7 @@ public class ARActivity extends Activity {
 	 * Called when the activity is first created.
 	 */
 	SensorManager sensorManager;
+	CameraSurfaceView camera_view;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -30,10 +34,15 @@ public class ARActivity extends Activity {
 
 		// Set up the 3D things
 		GLSurfaceView view = new GLSurfaceView(this);
+		view.setEGLContextClientVersion(1);
+		view.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+		view.getHolder().setFormat(PixelFormat.TRANSLUCENT);
 		OpenGLRenderer renderer = new OpenGLRenderer();
 		renderer.setOrientationProvider(orient);
 		view.setRenderer(renderer);
-		setContentView(view);
+//		setContentView(view);
+
+		setContentView(R.layout.activity_ar);
 
 		Intent intent = getIntent();
 		String data = intent.getStringExtra("DATA");
@@ -42,5 +51,22 @@ public class ARActivity extends Activity {
 
 		IMQS_Parser parser = new IMQS_Parser(data, myLat, myLong);
 		renderer.setPipes(parser.get_Pipes().clone());
+
+
+		FrameLayout preview = (FrameLayout) findViewById(R.id.composite);
+		if (preview == null) {
+			System.out.println("composite is null!");
+			System.exit(0);
+		}
+		if (preview.getChildCount() == 0) {
+			camera_view = new CameraSurfaceView(this);
+			preview.addView(view);
+			preview.addView(camera_view);
+		}
+		else {
+			preview.removeAllViews();
+			camera_view = null;
+			view = null;
+		}
 	}
 }
