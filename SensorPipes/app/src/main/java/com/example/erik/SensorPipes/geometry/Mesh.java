@@ -39,6 +39,8 @@ public class Mesh {
 
     private boolean cull_enabled = true;
 
+    private int pick_id = 0;
+
     public void draw(GL10 gl) {
         // Counter-clockwise winding.
         gl.glFrontFace(GL10.GL_CCW);
@@ -90,14 +92,13 @@ public class Mesh {
      * colour of the clicked pixel is examined to identify which object was drawn. 0 means no
      * object / background.
      * @param gl GL10 renderer
-     * @param id id for object to be drawn.
      */
-    public void draw_for_picking(GL10 gl, int id) {
+    public void draw_for_picking(GL10 gl) {
         // preserve the original colour
         float[] temp = rgba.clone();
 
         // assign new colour generated from the id and draw the mesh
-        rgba = GLObjectPicker.int_to_colour(id);
+        rgba = GLObjectPicker.int_to_colour(pick_id);
         draw(gl);
 
         // restore the old colour
@@ -194,5 +195,13 @@ public class Mesh {
 
     public void setCullEnabled(boolean enabled) {
         cull_enabled = enabled;
+    }
+
+    public int getPick_id() {
+        return pick_id;
+    }
+
+    public void setPick_id(int pick_id) {
+        this.pick_id = pick_id;
     }
 }

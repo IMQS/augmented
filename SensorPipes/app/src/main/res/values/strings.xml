@@ -2,4 +2,7 @@
     <string name="app_name">SensorPipes</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_json">poop</string>
+
+    <string name="pipeDefaultColour">3251adff</string>
+    <string name="pipeHiglightColour">328eadff</string>
 </resources>

@@ -4,6 +4,9 @@ package com.example.erik.SensorPipes.geometry;
  * Created by erik on 2016/01/08.
  */
 
+import com.example.erik.SensorPipes.utilities.ColourUtil;
+import com.example.erik.SensorPipes.utilities.Hex2float;
+
 import java.util.Vector;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -19,10 +22,22 @@ public class Group extends Mesh {
     }
 
     @Override
-    public void draw_for_picking(GL10 gl, int id_offset) {
+    public void draw_for_picking(GL10 gl) {
         int size = children.size();
         for( int i = 0; i < size; i++)
-            children.get(i).draw_for_picking(gl, id_offset + i);
+            children.get(i).draw_for_picking(gl);
+    }
+
+    public void draw_higlighted(GL10 gl, int higlight_id) {
+        Mesh m;
+        int size = children.size();
+        for (int i = 0; i < size; i++) {
+            m = children.get(i);
+            if (m.getPick_id() == higlight_id) {
+                m.setColor(Hex2float.parseHex("aabbccdd"));
+            }
+            m.draw(gl);
+        }
     }
 
     public void add(int location, Mesh object) {

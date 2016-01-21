@@ -91,7 +91,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
 		//draw the group of all pipes
 		if (touch_dirty) {
-			g.draw_for_picking(gl, 1);
+			g.draw_for_picking(gl);
 
 			ByteBuffer pixelBuffer = ByteBuffer.allocateDirect(4);
 			pixelBuffer.order(ByteOrder.nativeOrder());
