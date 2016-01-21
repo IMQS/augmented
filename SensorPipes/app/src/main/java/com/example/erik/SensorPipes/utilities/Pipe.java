@@ -51,6 +51,8 @@ public class Pipe extends Asset {
 		if (this.cylinder == null) {
 			this.cylinder = new Cylinder(this.get_length(), 0.3f, 16);
 			this.cylinder.set_rotation(0, 0, this.get_angle());
+
+			this.cylinder.setPick_id(getId());
 			
 			Location xcenter = new Location(this.get_location());
 			xcenter.setLatitude(this.get_my_location().getLatitude());

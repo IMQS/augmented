@@ -102,7 +102,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 			pixelBuffer.get(b);
 			last_picked_id = GLObjectPicker.colour_to_int(b);
 			System.out.println("*****************************************");
-			System.out.println("*          YOU TOUCHED ME!! <3          *");
+			System.out.println("*     YOU TOUCHED ME!!    (づ￣ ³￣)づ   *");
 			System.out.println("*          X:  " + touch_x);
 			System.out.println("*          Y:  " + touch_y);
 			System.out.println("*                                       *");
@@ -116,7 +116,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 			gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI), -1 * q.getY(), q.getX(), q.getZ());
 			gl.glTranslatef(0, 0, -3);
 		}
-        g.draw(gl);
+        g.draw_higlighted(gl, last_picked_id);
         plane.draw(gl);
     }
 
@@ -148,7 +148,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         for (int i=0; i<pipes.length; i++) {
             p = pipes[i];
             c = p.get_cylinder();
-            c.setColor(Hex2float.parseHex(ColourUtil.getNextColour()));
+            c.setColor(Hex2float.parseHex(ColourUtil.PIPE_COLOUR));
             g.add(c);
         }
     }

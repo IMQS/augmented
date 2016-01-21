@@ -31,7 +31,10 @@ public class IMQS_Parser {
 	}
 
 	private Pipe[] parseJSON(String unparsed, double myLat, double myLong) {
-		JSONParser parser = new JSONParser();
+
+		// id used for selecting and highlighting assets. Has to start at 1, because 0 := no asset selected
+		int id = 1;
+
 		ArrayList<Pipe> pipeList = new ArrayList<Pipe>();
 
 		try {
@@ -61,6 +64,7 @@ public class IMQS_Parser {
 							z = gps.get(k + 2);
 							double end[] = {x, y, z};
 
+							pipe.setId(id++);
 							pipe.set_my_location(new double[]{myLong, myLat});
 							pipe.set_start_end_coords(start, end);
 							pipeList.add(pipe);
