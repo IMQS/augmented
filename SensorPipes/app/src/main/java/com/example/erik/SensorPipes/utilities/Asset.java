@@ -15,7 +15,17 @@ public class Asset {
 	private String type_descr;
 	private int network_id;
 
+	private int id = 0;
+
 	public Asset() {
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public void set_location(double coord[]) {
