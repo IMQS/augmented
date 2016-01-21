@@ -108,7 +108,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         Pipe p;
         for (int i=0; i<pipes.length; i++) {
             p = pipes[i];
-            c = p.get_Cylinder();
+            c = p.get_cylinder();
             c.setColor(Hex2float.parseHex(ColourUtil.getNextColour()));
             g.add(c);
         }

@@ -3,6 +3,7 @@ package com.example.erik.SensorPipes.utilities;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -11,6 +12,7 @@ import com.google.gson.internal.LinkedTreeMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -37,26 +39,35 @@ public class IMQS_Parser {
 
 			Gson gson = new GsonBuilder().create();
 			jRoot root = gson.fromJson(unparsed.substring(4), jRoot.class);
-			
+
+			ArrayList<jField> fields = root.Tables.get("g_table_6").Fields;
 			ArrayList<ArrayList<Object>> records = root.Tables.get("g_table_6").Records;
 			for (int i = 0; i < records.size(); i++) {
+				for (int j = 0; j < fields.size(); j++) {
+					if (fields.get(j).Type.equals(("polyline"))) {
+						ArrayList<Double> gps = ((ArrayList<ArrayList<Double>>) ((LinkedTreeMap<String, Object>) records.get(i).get(j)).get("v")).get(0);
 
-				ArrayList<Double> gps = ((ArrayList<ArrayList<Double>>)((LinkedTreeMap<String, Object>) records.get(i).get(5)).get("v")).get(0);
+						for (int k = 0; k < gps.size() - 3; ) {
+							Pipe pipe = new Pipe();
+							double x = gps.get(k);
+							double y = gps.get(k + 1);
+							double z = gps.get(k + 2);
+							double start[] = {x, y, z};
 
-				for (int j = 0; j < gps.size() - 3;) {
-					double x = gps.get(j);
-					double y = gps.get(j + 1);
-					double z = gps.get(j + 2);
-					double start[] = {x, y, z};
+							k += 3;
 
-					j += 3;
+							x = gps.get(k);
+							y = gps.get(k + 1);
+							z = gps.get(k + 2);
+							double end[] = {x, y, z};
 
-					x = gps.get(j);
-					y = gps.get(j + 1);
-					z = gps.get(j + 2);
-					double end[] = {x, y, z};
+							pipe.set_my_location(new double[]{myLong, myLat});
+							pipe.set_start_end_coords(start, end);
+							pipeList.add(pipe);
+						}
+					} else {
 
-					pipeList.add(new Pipe(start, end, myLat, myLong));
+					}
 				}
 			}
 		} catch (Exception e) {
