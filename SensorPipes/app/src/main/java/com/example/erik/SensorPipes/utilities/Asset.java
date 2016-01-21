@@ -5,7 +5,7 @@ import android.location.Location;
 /**
  * Created by fritzonfire on 1/8/16.
  */
-public class Asset {
+public class Asset implements Cloneable {
 
 	private Location location;
 	private Location my_location;

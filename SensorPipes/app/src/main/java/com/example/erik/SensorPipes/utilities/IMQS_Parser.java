@@ -31,7 +31,6 @@ public class IMQS_Parser {
 	}
 
 	private Pipe[] parseJSON(String unparsed, double myLat, double myLong) {
-		JSONParser parser = new JSONParser();
 		ArrayList<Pipe> pipeList = new ArrayList<Pipe>();
 
 		try {
@@ -43,30 +42,38 @@ public class IMQS_Parser {
 			ArrayList<jField> fields = root.Tables.get("g_table_6").Fields;
 			ArrayList<ArrayList<Object>> records = root.Tables.get("g_table_6").Records;
 			for (int i = 0; i < records.size(); i++) {
+				Pipe pipe = new Pipe();
 				for (int j = 0; j < fields.size(); j++) {
-					if (fields.get(j).Type.equals(("polyline"))) {
-						ArrayList<Double> gps = ((ArrayList<ArrayList<Double>>) ((LinkedTreeMap<String, Object>) records.get(i).get(j)).get("v")).get(0);
+					switch (fields.get(j).Type) {
+						case "rowid":
 
-						for (int k = 0; k < gps.size() - 3; ) {
-							Pipe pipe = new Pipe();
-							double x = gps.get(k);
-							double y = gps.get(k + 1);
-							double z = gps.get(k + 2);
-							double start[] = {x, y, z};
+							break;
 
-							k += 3;
+						case "polyline":
+							ArrayList<Double> gps = ((ArrayList<ArrayList<Double>>) ((LinkedTreeMap<String, Object>) records.get(i).get(j)).get("v")).get(0);
 
-							x = gps.get(k);
-							y = gps.get(k + 1);
-							z = gps.get(k + 2);
-							double end[] = {x, y, z};
+							for (int k = 0; k < gps.size() - 3; ) {
+								Pipe segment = (Pipe) pipe.clone();
+								double x = gps.get(k);
+								double y = gps.get(k + 1);
+								double z = gps.get(k + 2);
+								double start[] = {x, y, z};
 
-							pipe.set_my_location(new double[]{myLong, myLat});
-							pipe.set_start_end_coords(start, end);
-							pipeList.add(pipe);
-						}
-					} else {
+								k += 3;
 
+								x = gps.get(k);
+								y = gps.get(k + 1);
+								z = gps.get(k + 2);
+								double end[] = {x, y, z};
+
+								segment.set_my_location(new double[]{myLong, myLat});
+								segment.set_start_end_coords(start, end);
+								pipeList.add(segment);
+							}
+							break;
+
+						default:
+							break;
 					}
 				}
 			}

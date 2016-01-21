@@ -51,7 +51,7 @@ public class Pipe extends Asset {
 		if (this.cylinder == null) {
 			this.cylinder = new Cylinder(this.get_length(), 0.3f, 16);
 			this.cylinder.set_rotation(0, 0, this.get_angle());
-			
+
 			Location xcenter = new Location(this.get_location());
 			xcenter.setLatitude(this.get_my_location().getLatitude());
 			float x = xcenter.distanceTo(this.get_my_location());
@@ -71,5 +71,9 @@ public class Pipe extends Asset {
 			this.cylinder.set_translation(x, y, z);
 		}
 		return this.cylinder;
+	}
+
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
 	}
 }
