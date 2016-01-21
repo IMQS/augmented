@@ -1,0 +1,29 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="gps_spoof_switch"
+        android:title="Enable GPS spoof."/>
+
+    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
+    <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+    <EditTextPreference
+        android:defaultValue="-33.96505863"
+        android:inputType="numberDecimal"
+        android:key="latitude"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Latitude"/>
+
+    <EditTextPreference
+        android:defaultValue="18.83736346"
+        android:inputType="numberDecimal"
+        android:key="longitude"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Longitude"
+        />
+
+</PreferenceScreen>

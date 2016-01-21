@@ -4,7 +4,16 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.internal.LinkedTreeMap;
+
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Created by fritzonfire on 1/13/16.
@@ -26,34 +35,40 @@ public class IMQS_Parser {
 		ArrayList<Pipe> pipeList = new ArrayList<Pipe>();
 
 		try {
-			System.out.println(unparsed);
+			System.out.println("unparsed: " + unparsed.substring(4));
 
-			Object obj = parser.parse("[" + unparsed + "]");
-			JSONArray array = (JSONArray) obj;
+			Gson gson = new GsonBuilder().create();
+			jRoot root = gson.fromJson(unparsed.substring(4), jRoot.class);
 
-			String temp = ((JSONObject) array.get(1)).get("Tables").toString();
-			String data[] = temp.split("v\":\\[\\[");
+			ArrayList<jField> fields = root.Tables.get("g_table_6").Fields;
+			ArrayList<ArrayList<Object>> records = root.Tables.get("g_table_6").Records;
+			for (int i = 0; i < records.size(); i++) {
+				for (int j = 0; j < fields.size(); j++) {
+					if (fields.get(j).Type.equals(("polyline"))) {
+						ArrayList<Double> gps = ((ArrayList<ArrayList<Double>>) ((LinkedTreeMap<String, Object>) records.get(i).get(j)).get("v")).get(0);
 
-			for (int i = 0; i < data.length - 1; i++) {
-				String item = data[i + 1];
-				String gps[] = item.split(",");
+						for (int k = 0; k < gps.size() - 3; ) {
+							Pipe pipe = new Pipe();
+							double x = gps.get(k);
+							double y = gps.get(k + 1);
+							double z = gps.get(k + 2);
+							double start[] = {x, y, z};
 
-				int j = 0;
-				do {
-					double x = Double.parseDouble(gps[j]);
-					double y = Double.parseDouble(gps[j + 1]);
-					double z = 0;
-					double start[] = {x, y, z};
+							k += 3;
 
-					j += 3;
+							x = gps.get(k);
+							y = gps.get(k + 1);
+							z = gps.get(k + 2);
+							double end[] = {x, y, z};
 
-					x = Double.parseDouble(gps[j]);
-					y = Double.parseDouble(gps[j + 1]);
-					z = 0;
-					double end[] = {x, y, z};
+							pipe.set_my_location(new double[]{myLong, myLat});
+							pipe.set_start_end_coords(start, end);
+							pipeList.add(pipe);
+						}
+					} else {
 
-					pipeList.add(new Pipe(start, end, myLat, myLong));
-				} while (!gps[j + 2].startsWith("0.0]]"));
+					}
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
