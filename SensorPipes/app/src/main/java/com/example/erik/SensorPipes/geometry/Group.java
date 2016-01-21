@@ -34,7 +34,9 @@ public class Group extends Mesh {
         for (int i = 0; i < size; i++) {
             m = children.get(i);
             if (m.getPick_id() == higlight_id) {
-                m.setColor(Hex2float.parseHex("aabbccdd"));
+                m.setColor(Hex2float.parseHex(ColourUtil.PIPE_HIGLIGHT_COLOUR));
+            } else {
+                m.setColor(Hex2float.parseHex((ColourUtil.PIPE_COLOUR)));
             }
             m.draw(gl);
         }
