@@ -18,6 +18,13 @@ public class Group extends Mesh {
             children.get(i).draw(gl);
     }
 
+    @Override
+    public void draw_for_picking(GL10 gl, int id_offset) {
+        int size = children.size();
+        for( int i = 0; i < size; i++)
+            children.get(i).draw_for_picking(gl, id_offset + i);
+    }
+
     public void add(int location, Mesh object) {
         children.add(location, object);
     }

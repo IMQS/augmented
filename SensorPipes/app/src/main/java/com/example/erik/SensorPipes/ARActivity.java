@@ -7,6 +7,7 @@ import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -21,6 +22,7 @@ public class ARActivity extends Activity {
 	 */
 	SensorManager sensorManager;
 	CameraSurfaceView camera_view;
+	OpenGLRenderer renderer;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -37,7 +39,7 @@ public class ARActivity extends Activity {
 		view.setEGLContextClientVersion(1);
 		view.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 		view.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-		OpenGLRenderer renderer = new OpenGLRenderer();
+		renderer = new OpenGLRenderer();
 		renderer.setOrientationProvider(orient);
 		view.setRenderer(renderer);
 //		setContentView(view);
@@ -68,5 +70,23 @@ public class ARActivity extends Activity {
 			camera_view = null;
 			view = null;
 		}
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent e) {
+		// MotionEvent reports input details from the touch screen
+		// and other input controls. In this case, you are only
+		// interested in events where the touch position changed.
+
+		float x = e.getX();
+		float y = e.getY();
+
+		switch (e.getAction()) {
+			case MotionEvent.ACTION_UP:
+				System.out.println("TOUCH!   X: " + x + "  Y: " + y);
+				renderer.pick(x, y);
+				break;
+		}
+		return true;
 	}
 }

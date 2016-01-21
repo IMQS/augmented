@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
+import android.view.MotionEvent;
 
 import com.example.erik.SensorPipes.orientationProvider.ImprovedOrientationSensor1Provider;
 
@@ -27,4 +28,6 @@ public class OverlayView extends GLSurfaceView {
 		setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
 	}
+
+
 }

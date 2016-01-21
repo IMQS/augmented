@@ -1,5 +1,7 @@
 package com.example.erik.SensorPipes.geometry;
 
+import com.example.erik.SensorPipes.utilities.GLObjectPicker;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -81,6 +83,25 @@ public class Mesh {
         // Disable face culling.
         gl.glDisable(GL10.GL_CULL_FACE);
 
+    }
+
+    /** This method is used to draw objects for picking (clicking / touching).
+     * Each object is assigned an id, which is converted to colour. When finished rendering, the
+     * colour of the clicked pixel is examined to identify which object was drawn. 0 means no
+     * object / background.
+     * @param gl GL10 renderer
+     * @param id id for object to be drawn.
+     */
+    public void draw_for_picking(GL10 gl, int id) {
+        // preserve the original colour
+        float[] temp = rgba.clone();
+
+        // assign new colour generated from the id and draw the mesh
+        rgba = GLObjectPicker.int_to_colour(id);
+        draw(gl);
+
+        // restore the old colour
+        rgba = temp;
     }
 
     protected void setVertices(float[] vertices) {
