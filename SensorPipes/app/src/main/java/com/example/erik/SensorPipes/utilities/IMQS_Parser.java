@@ -48,7 +48,23 @@ public class IMQS_Parser {
 				for (int j = 0; j < fields.size(); j++) {
 					switch (fields.get(j).Type) {
 						case "rowid":
+							pipe.set_rowid((int) records.get(i).get(j));
+							break;
 
+						case "FEATURE_ID":
+							pipe.set_feature_id((String) records.get(i).get(j));
+							break;
+
+						case "FEAT_TYPE":
+							pipe.set_feat_type((int) records.get(i).get(j));
+							break;
+
+						case "TYPE_DESCR":
+							pipe.set_type_descr((String) records.get(i).get(j));
+							break;
+
+						case "NETWORK_ID":
+							pipe.set_network_id((int) records.get(i).get(j));
 							break;
 
 						case "polyline":
