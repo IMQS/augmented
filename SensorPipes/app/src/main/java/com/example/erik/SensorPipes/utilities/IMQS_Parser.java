@@ -3,8 +3,15 @@ package com.example.erik.SensorPipes.utilities;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.internal.LinkedTreeMap;
+
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Created by fritzonfire on 1/13/16.
@@ -26,34 +33,31 @@ public class IMQS_Parser {
 		ArrayList<Pipe> pipeList = new ArrayList<Pipe>();
 
 		try {
-			System.out.println(unparsed);
+			System.out.println("unparsed: " + unparsed.substring(4));
 
-			Object obj = parser.parse("[" + unparsed + "]");
-			JSONArray array = (JSONArray) obj;
+			Gson gson = new GsonBuilder().create();
+			jRoot root = gson.fromJson(unparsed.substring(4), jRoot.class);
+			
+			ArrayList<ArrayList<Object>> records = root.Tables.get("g_table_6").Records;
+			for (int i = 0; i < records.size(); i++) {
 
-			String temp = ((JSONObject) array.get(1)).get("Tables").toString();
-			String data[] = temp.split("v\":\\[\\[");
+				ArrayList<Double> gps = ((ArrayList<ArrayList<Double>>)((LinkedTreeMap<String, Object>) records.get(i).get(5)).get("v")).get(0);
 
-			for (int i = 0; i < data.length - 1; i++) {
-				String item = data[i + 1];
-				String gps[] = item.split(",");
-
-				int j = 0;
-				do {
-					double x = Double.parseDouble(gps[j]);
-					double y = Double.parseDouble(gps[j + 1]);
-					double z = 0;
+				for (int j = 0; j < gps.size() - 3;) {
+					double x = gps.get(j);
+					double y = gps.get(j + 1);
+					double z = gps.get(j + 2);
 					double start[] = {x, y, z};
 
 					j += 3;
 
-					x = Double.parseDouble(gps[j]);
-					y = Double.parseDouble(gps[j + 1]);
-					z = 0;
+					x = gps.get(j);
+					y = gps.get(j + 1);
+					z = gps.get(j + 2);
 					double end[] = {x, y, z};
 
 					pipeList.add(new Pipe(start, end, myLat, myLong));
-				} while (!gps[j + 2].startsWith("0.0]]"));
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

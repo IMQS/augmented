@@ -3,11 +3,14 @@ package com.example.erik.SensorPipes;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -20,19 +23,26 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.erik.SensorPipes.utilities.jRoot;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class LoginActivity extends AppCompatActivity {
 
-	private Location myGPS = null;
-	private double radius = 0.2; // km
+	private static Location myGPS = null;
+	private double radius = 0.1; // km
 	private static final String TAG = "LoginActivity";
+	private final String pref_db = "PREFERENCE";
 	private String responce = "null, { \"RecordCount\" : 0, \"SyncTime\" : 1453106652936.0," +
 			" \"Tables\" : { \"g_table_6\" : { \"Fields\" : [ { \"Name\" : \"rowid\", " +
 			"\"Type\" : \"int64\", \"Unique\" : true }, { \"Name\" : \"Geometry\", " +
@@ -141,7 +151,7 @@ public class LoginActivity extends AppCompatActivity {
 			public void onLocationChanged(Location location) {
 				// Called when a new location is found by the network location provider.
 				myGPS = new Location(location);
-				System.out.println("************* Location Update ************");
+				System.out.println("************* Location Update ************");;
 				login_btn.setEnabled(true);
 			}
 
@@ -215,6 +225,8 @@ public class LoginActivity extends AppCompatActivity {
 
 		//noinspection SimplifiableIfStatement
 		if (id == R.id.action_settings) {
+			Intent settings = new Intent(this, SettingsActivity.class);
+			startActivity(settings);
 			return true;
 		}
 
@@ -300,8 +312,7 @@ public class LoginActivity extends AppCompatActivity {
 						"[[" + (myGPS.getLongitude() - xradius) + "," + myGPS.getLatitude() + "," +
 						myGPS.getLongitude() + "," + (myGPS.getLatitude() + yradius) + "],0]," +
 						"[[" + myGPS.getLongitude() + "," + myGPS.getLatitude() + "," +
-						(myGPS.getLongitude() + xradius) + "," + (myGPS.getLatitude() + yradius) + "],0]]" +
-						",\"IncludeFields\":[\"rowid\",\"Geometry\"]}}}";
+						(myGPS.getLongitude() + xradius) + "," + (myGPS.getLatitude() + yradius) + "],0]]}}}";
 
 				Log.v(TAG, query);
 
