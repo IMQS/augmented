@@ -5,6 +5,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import es.ava.aruco.BoardDetector;
 
 import java.io.IOException;
 
