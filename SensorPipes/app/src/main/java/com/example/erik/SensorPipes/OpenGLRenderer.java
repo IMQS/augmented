@@ -19,7 +19,6 @@ import com.example.erik.SensorPipes.utilities.ColourUtil;
 import com.example.erik.SensorPipes.utilities.GLObjectPicker;
 import com.example.erik.SensorPipes.utilities.Hex2float;
 import com.example.erik.SensorPipes.utilities.Pipe;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
