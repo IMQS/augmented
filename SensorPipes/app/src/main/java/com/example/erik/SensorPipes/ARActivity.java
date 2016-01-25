@@ -34,6 +34,8 @@ public class ARActivity extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+		SharedPreferences prefs = getSharedPreferences(pref_db, Context.MODE_PRIVATE);
+
 		// Set up the OrientationProvider
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		OrientationProvider orient = new ImprovedOrientationSensor1Provider(sensorManager);
@@ -44,6 +46,7 @@ public class ARActivity extends Activity {
 		view.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 		view.getHolder().setFormat(PixelFormat.TRANSLUCENT);
 		renderer = new OpenGLRenderer();
+		renderer.setSharedPreferences(prefs);
 		renderer.setOrientationProvider(orient);
 		view.setRenderer(renderer);
 //		setContentView(view);
@@ -53,9 +56,7 @@ public class ARActivity extends Activity {
 		Intent intent = getIntent();
 		String data = intent.getStringExtra("DATA");
 
-		SharedPreferences prefs = getSharedPreferences(pref_db, Context.MODE_PRIVATE);
 		double lat, lng;
-
 		lat = Double.parseDouble(prefs.getString("latitude", "-33.96525801"));
 		lng = Double.parseDouble(prefs.getString("longitude", "18.83710027"));
 

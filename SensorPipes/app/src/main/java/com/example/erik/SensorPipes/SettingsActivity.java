@@ -25,10 +25,11 @@ public class SettingsActivity extends AppCompatActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
+		load_defaults();
+
 		Button save = (Button) findViewById(R.id.save);
 		save.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
-//				Button login = (Button) findViewById(R.id.login_button);
 				SharedPreferences prefs = getSharedPreferences(pref_db, Context.MODE_PRIVATE);
 				Switch spoof = (Switch) findViewById(R.id.gps_spoof);
 
@@ -39,14 +40,33 @@ public class SettingsActivity extends AppCompatActivity {
 					prefs.edit().putString("latitude", latitude.getText().toString()).commit();
 					prefs.edit().putString("longitude", longitude.getText().toString()).commit();
 					prefs.edit().putBoolean("spoof_gps", true).commit();
-//					login.setEnabled(true);
 				} else {
 					prefs.edit().putBoolean("spoof_gps", false).commit();
-//					login.setEnabled(false);
 				}
+
+				EditText angle_offset = (EditText) findViewById(R.id.angle_offset);
+				prefs.edit().putString("angle_offset", angle_offset.getText().toString()).commit();
+
 				finish();
 			}
 		});
+
+	}
+
+	private void load_defaults() {
+		SharedPreferences prefs = getSharedPreferences(pref_db, Context.MODE_PRIVATE);
+
+		Switch spoof_gps = (Switch) findViewById(R.id.gps_spoof);
+		spoof_gps.setChecked(prefs.getBoolean("spoof_gps", false));
+
+		EditText latitude = (EditText) findViewById(R.id.latitude);
+		latitude.setText(prefs.getString("latitude", "-33.96525801"));
+
+		EditText longitude = (EditText) findViewById(R.id.longitude);
+		longitude.setText(prefs.getString("longitude", "18.83710027"));
+
+		EditText angle_offset = (EditText) findViewById(R.id.angle_offset);
+		angle_offset.setText(prefs.getString("angle_offset", "0.0"));
 
 	}
 }

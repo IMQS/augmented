@@ -53,6 +53,19 @@
             android:text="18.83736346"
             android:id="@+id/longitude" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Angle Offset"
+            android:id="@+id/textView5"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="0.0"
+            android:id="@+id/angle_offset" />
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
