@@ -36,7 +36,8 @@ public class BoardDetector {
 		// find among the detected markers those who belong to the board configuration
 		int height = conf.height;
 		int width = conf.width;
-		int[][] detected = new int[width][height];// indices of the markers in the vector detectedMarkers
+
+		int[][] detected = new int[height][width];// indices of the markers in the vector detectedMarkers
 		for(int i=0;i<width;i++)
 			for(int j=0;j<height;j++)
 				detected[i][j] = -1;

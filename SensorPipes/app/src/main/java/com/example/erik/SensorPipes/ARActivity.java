@@ -16,13 +16,34 @@ import com.example.erik.SensorPipes.orientationProvider.ImprovedOrientationSenso
 import com.example.erik.SensorPipes.orientationProvider.OrientationProvider;
 import com.example.erik.SensorPipes.utilities.IMQS_Parser;
 
+import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
+
+import java.util.Vector;
+
+import es.ava.aruco.Board;
+import es.ava.aruco.BoardConfiguration;
+import es.ava.aruco.Marker;
+import es.ava.aruco.android.Aruco3dActivity;
+import es.ava.aruco.exceptions.ExtParamException;
+import min3d.animation.AnimationObject3d;
+import min3d.parser.IParser;
+import min3d.parser.Parser;
+import min3d.vos.Light;
+
 public class ARActivity extends Activity {
+
+	static {
+		System.loadLibrary("opencv_java");
+	}
+
 	/**
 	 * Called when the activity is first created.
 	 */
 	SensorManager sensorManager;
 	CameraSurfaceView camera_view;
 	OpenGLRenderer renderer;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -70,6 +91,7 @@ public class ARActivity extends Activity {
 			camera_view = null;
 			view = null;
 		}
+
 	}
 
 	@Override
@@ -89,4 +111,5 @@ public class ARActivity extends Activity {
 		}
 		return true;
 	}
+
 }

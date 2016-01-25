@@ -26,9 +26,9 @@ public class CameraParameters {
 	// | Fx 0  Cx |
 	// | 0  Fy Cy |
 	// | 0  0   1 |
-	private Mat cameraMatrix;
-	private MatOfDouble distorsionMatrix;
-	private Size camSize;
+	public Mat cameraMatrix;
+	public MatOfDouble distorsionMatrix;
+	public Size camSize;
 	
 	public CameraParameters(){
 		cameraMatrix = new Mat(3,3,CvType.CV_32FC1);
