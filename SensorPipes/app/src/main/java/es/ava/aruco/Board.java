@@ -25,7 +25,7 @@ public class Board extends Vector<Marker>{
 	
 	// fields
 	protected BoardConfiguration conf;
-	protected Mat Rvec, Tvec;
+	public Mat Rvec, Tvec;
 	protected float markerSizeMeters;
 	private Object3d object;
 	
