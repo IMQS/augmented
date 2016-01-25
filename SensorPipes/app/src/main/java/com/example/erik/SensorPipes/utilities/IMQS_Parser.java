@@ -36,10 +36,10 @@ public class IMQS_Parser {
 		ArrayList<Pipe> pipeList = new ArrayList<Pipe>();
 
 		try {
-			System.out.println("unparsed: " + unparsed.substring(4));
+			System.out.println("unparsed: " + unparsed);
 
 			Gson gson = new GsonBuilder().create();
-			jRoot root = gson.fromJson(unparsed.substring(4), jRoot.class);
+			jRoot root = gson.fromJson(unparsed, jRoot.class);
 
 			ArrayList<jField> fields = root.Tables.get("g_table_6").Fields;
 			ArrayList<ArrayList<Object>> records = root.Tables.get("g_table_6").Records;

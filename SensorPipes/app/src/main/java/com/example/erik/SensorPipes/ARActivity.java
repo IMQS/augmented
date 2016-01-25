@@ -1,7 +1,9 @@
 package com.example.erik.SensorPipes;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
@@ -17,6 +19,8 @@ import com.example.erik.SensorPipes.orientationProvider.OrientationProvider;
 import com.example.erik.SensorPipes.utilities.IMQS_Parser;
 
 public class ARActivity extends Activity {
+	private final String pref_db = "PREFERENCE";
+
 	/**
 	 * Called when the activity is first created.
 	 */
@@ -48,10 +52,14 @@ public class ARActivity extends Activity {
 
 		Intent intent = getIntent();
 		String data = intent.getStringExtra("DATA");
-		double myLat = intent.getDoubleExtra("Lat", 0.0);
-		double myLong = intent.getDoubleExtra("Long", 0.0);
 
-		IMQS_Parser parser = new IMQS_Parser(data, myLat, myLong);
+		SharedPreferences prefs = getSharedPreferences(pref_db, Context.MODE_PRIVATE);
+		double lat, lng;
+
+		lat = Double.parseDouble(prefs.getString("latitude", "-33.96525801"));
+		lng = Double.parseDouble(prefs.getString("longitude", "18.83710027"));
+
+		IMQS_Parser parser = new IMQS_Parser(data, lat, lng);
 		renderer.setPipes(parser.get_Pipes().clone());
 
 
