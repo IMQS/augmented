@@ -23,10 +23,10 @@ import java.util.Vector;
 
 class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
+	public Board boardDetected;
 	private class CVCallback implements Camera.PreviewCallback {
 		MarkerDetector md;
 		BoardDetector bd;
-		Board boardDetected;
 		BoardConfiguration bConf;
 		Vector<Marker> mDetectedMarkers;
 		CameraParameters camParams;

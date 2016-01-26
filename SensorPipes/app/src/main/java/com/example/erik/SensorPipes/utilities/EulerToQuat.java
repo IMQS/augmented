@@ -7,7 +7,6 @@ public class EulerToQuat {
 
     //Look away now!
     public static double[] convertEulerAnglesToQuaternion(double xRotation,double yRotation,double zRotation){
-        //Converted using these standards http://www.euclideanspace.com/maths/standards/index.htm
 
         //yRot = attitude (pitch)
         //zRot = heading (yaw)
@@ -25,12 +24,12 @@ public class EulerToQuat {
         return quaternion;
     }
 
-    //you got this far, nice! but srs. Stop looking.
+    //You got this far, nice! But srs. Stop looking.
     private static double cos(double in){
         return (double)Math.cos(in);
     }
     private static double sin(double in){
         return (double)Math.sin(in);
     }
-    //jk. not that bad was it.
+    //JK. Not that bad was it?
 }

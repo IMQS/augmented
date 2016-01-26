@@ -33,6 +33,8 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 	private float touch_x = 0f, touch_y = 0f;
 	private int last_picked_id = 0;
 	private boolean touch_dirty = false;
+	private CameraSurfaceView cameraView;
+
 
     OrientationProvider orient;
 
@@ -43,9 +45,10 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 	  float angle = 0;
     Group g = new Group();
 
-    public OpenGLRenderer() {
+    public OpenGLRenderer(CameraSurfaceView cameraView) {
         plane = new Plane(2,2);
         plane.setColor(1f, 1f, 1f, 1f);
+		this.cameraView = cameraView;
     }
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -80,13 +83,24 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
 		//TODO:
 		//use the following rotation if the app is in portrait mode
-//		    gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI), q.getX(), q.getY(), q.getZ());
+//		gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI), q.getX(), q.getY(), q.getZ());
 
 		// For landscape mode, we need to swap the X and Y axes, and invert the new X axis.
 		gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI), -1 * q.getY(), q.getX(), q.getZ());
 
-		//move the camera up a bit
-		gl.glTranslatef(0, 0, -3);
+
+		if (cameraView != null) {
+			//first convert Rvec to quaternions for opengl rotate to use
+			//EulerToQuat.convertEulerAnglesToQuaternion(cameraView.boardDetected.Rvec.get(0,0)[0], cameraView.boardDetected.Rvec.get(0,1)[0], cameraView.boardDetected.Rvec.get(0,2)[0]);
+
+			//use Rvec and Tvec to rotate the camera relative to the board.
+			//gl.glRotatef((float) (2.0f * Math.acos() * 180.0f / Math.PI), -1 * q.getY(), q.getX(), q.getZ());
+			gl.glTranslatef(((float) (cameraView.boardDetected.Tvec.get(0, 0)[0]))*100, ((float) (cameraView.boardDetected.Tvec.get(0, 1)[0]))*100, ((float) (cameraView.boardDetected.Tvec.get(0, 2)[0]))*100);
+			System.out.println("----------------- " + ((float) (cameraView.boardDetected.Tvec.get(0, 0)[0]))*100);
+		} else {
+			//move the camera up a bit
+			gl.glTranslatef(0, 0, -3);
+		}
 
 		//draw the group of all pipes
 		if (touch_dirty) {
