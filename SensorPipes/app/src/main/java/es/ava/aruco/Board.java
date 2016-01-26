@@ -24,9 +24,9 @@ public class Board extends Vector<Marker>{
 	private static final long serialVersionUID = 1L;
 	
 	// fields
-	protected BoardConfiguration conf;
+	public BoardConfiguration conf;
 	public Mat Rvec, Tvec;
-	protected float markerSizeMeters;
+	public float markerSizeMeters;
 	private Object3d object;
 	
 	// constructor
