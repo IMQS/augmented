@@ -203,8 +203,9 @@ public class LoginActivity extends AppCompatActivity {
 		protected String doInBackground(String... credentials) {
 
 			HttpURLConnection conn = null;
+			SharedPreferences prefs = getSharedPreferences(pref_db, Context.MODE_PRIVATE);
 			try {
-				conn = (HttpURLConnection) new URL("http://uat.imqs.co.za/auth2/login").openConnection();
+				conn = (HttpURLConnection) new URL(prefs.getString("login_server", "http://uat.imqs.co.za/auth2/login")).openConnection();
 			} catch (Exception e) {
 				System.err.println("WAWAWAWAWAWA");
 				e.printStackTrace();
@@ -258,7 +259,7 @@ public class LoginActivity extends AppCompatActivity {
 			lng = Double.parseDouble(prefs.getString("longitude", "18.83710027"));
 
 			try {
-				conn = (HttpURLConnection) new URL("http://uat.imqs.co.za/db/1/generic/pull").openConnection();
+				conn = (HttpURLConnection) new URL(prefs.getString("pull_server", "http://uat.imqs.co.za/db/1/generic/pull")).openConnection();
 				conn.setRequestMethod("POST");
 			} catch (Exception e) {
 				Log.v(TAG, "Can not connect to server");

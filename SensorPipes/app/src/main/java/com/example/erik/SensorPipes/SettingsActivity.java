@@ -30,12 +30,13 @@ public class SettingsActivity extends AppCompatActivity {
 		Button save = (Button) findViewById(R.id.save);
 		save.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
+				EditText latitude, longitude, angle_offset, login_server, pull_server;
 				SharedPreferences prefs = getSharedPreferences(pref_db, Context.MODE_PRIVATE);
 				Switch spoof = (Switch) findViewById(R.id.gps_spoof);
 
 				if (spoof.isChecked()) {
-					EditText latitude = (EditText) findViewById(R.id.latitude);
-					EditText longitude = (EditText) findViewById(R.id.longitude);
+					latitude = (EditText) findViewById(R.id.latitude);
+					longitude = (EditText) findViewById(R.id.longitude);
 
 					prefs.edit().putString("latitude", latitude.getText().toString()).commit();
 					prefs.edit().putString("longitude", longitude.getText().toString()).commit();
@@ -44,8 +45,14 @@ public class SettingsActivity extends AppCompatActivity {
 					prefs.edit().putBoolean("spoof_gps", false).commit();
 				}
 
-				EditText angle_offset = (EditText) findViewById(R.id.angle_offset);
+				angle_offset = (EditText) findViewById(R.id.angle_offset);
 				prefs.edit().putString("angle_offset", angle_offset.getText().toString()).commit();
+
+				login_server = (EditText) findViewById(R.id.login_server);
+				prefs.edit().putString("login_server", login_server.getText().toString()).commit();
+
+				pull_server = (EditText) findViewById(R.id.pull_server);
+				prefs.edit().putString("pull_server", pull_server.getText().toString()).commit();
 
 				finish();
 			}

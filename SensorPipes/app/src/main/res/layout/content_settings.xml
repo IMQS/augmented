@@ -19,26 +19,28 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:weightSum="1">
 
         <Switch
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Enable GPS Spoof"
             android:id="@+id/gps_spoof" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="173dp"
             android:layout_height="wrap_content"
             android:text="Latidude"
-            android:id="@+id/textView3"/>
+            android:id="@+id/textView3"
+            />
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="155dp"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="-33.96505863"
-            android:id="@+id/latitude" />
+            android:id="@+id/latitude"
+            android:layout_gravity="right"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -47,11 +49,11 @@
             android:id="@+id/textView4"/>
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="155dp"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="18.83736346"
-            android:id="@+id/longitude" />
+            android:id="@+id/longitude"
+            android:layout_gravity="right"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -60,11 +62,37 @@
             android:id="@+id/textView5"/>
 
         <EditText
+            android:layout_width="61dp"
+            android:layout_height="wrap_content"
+            android:text="0.0"
+            android:id="@+id/angle_offset"
+            android:layout_gravity="right"/>
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="0.0"
-            android:id="@+id/angle_offset" />
+            android:text="Login Server"
+            android:id="@+id/textView6"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="http://uat.imqs.co.za/auth2/login"
+            android:id="@+id/login_server"
+            android:layout_gravity="right"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pull Server"
+            android:id="@+id/textView7"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="http://uat.imqs.co.za/db/1/generic/pull"
+            android:id="@+id/pull_server"
+            android:layout_gravity="right"/>
 
         <Button
             android:layout_width="wrap_content"
