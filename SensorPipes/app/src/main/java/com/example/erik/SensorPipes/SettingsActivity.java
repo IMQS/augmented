@@ -32,7 +32,12 @@ public class SettingsActivity extends AppCompatActivity {
 			public void onClick(View view) {
 				EditText latitude, longitude, angle_offset, login_server, pull_server;
 				SharedPreferences prefs = getSharedPreferences(pref_db, Context.MODE_PRIVATE);
-				Switch spoof = (Switch) findViewById(R.id.gps_spoof);
+				Switch marker, spoof;
+
+				marker = (Switch) findViewById(R.id.marker_tracker);
+				prefs.edit().putBoolean("marker_tracker", marker.isChecked()).commit();
+
+				spoof = (Switch) findViewById(R.id.gps_spoof);
 
 				if (spoof.isChecked()) {
 					latitude = (EditText) findViewById(R.id.latitude);
@@ -40,10 +45,9 @@ public class SettingsActivity extends AppCompatActivity {
 
 					prefs.edit().putString("latitude", latitude.getText().toString()).commit();
 					prefs.edit().putString("longitude", longitude.getText().toString()).commit();
-					prefs.edit().putBoolean("spoof_gps", true).commit();
-				} else {
-					prefs.edit().putBoolean("spoof_gps", false).commit();
 				}
+
+				prefs.edit().putBoolean("spoof_gps", spoof.isChecked()).commit();
 
 				angle_offset = (EditText) findViewById(R.id.angle_offset);
 				prefs.edit().putString("angle_offset", angle_offset.getText().toString()).commit();

@@ -25,6 +25,13 @@
         <Switch
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="Enable Marker Tracking"
+            android:id="@+id/marker_tracker"
+            android:checked="true" />
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="Enable GPS Spoof"
             android:id="@+id/gps_spoof" />
 
@@ -32,8 +39,7 @@
             android:layout_width="173dp"
             android:layout_height="wrap_content"
             android:text="Latidude"
-            android:id="@+id/textView3"
-            />
+            android:id="@+id/textView3" />
 
         <EditText
             android:layout_width="155dp"
