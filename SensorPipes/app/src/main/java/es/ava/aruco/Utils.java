@@ -45,7 +45,7 @@ public abstract class Utils {
             }
         }
 	}
-	    
+
 	protected static void rotateXAxis(Mat rotation){
 		// get the matrix corresponding to the rotation vector
 		Mat R = new Mat(3,3,CvType.CV_64FC1);
