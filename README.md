@@ -23,3 +23,13 @@ NB! your device must be using android api 21 or above (Lollipop).
 4. Type in your credentials on the android device.
 5. Hit login.
 6. You sould now beable to view the asset using your android device.
+
+## Credits
+IMQS
+Milan Geyser
+Ben Harper
+Erick Underhill
+IMQS Interns of 2016
+
+## License
+No officer.
