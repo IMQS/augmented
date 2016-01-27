@@ -29,6 +29,7 @@ NB! your device must be using android API 21 or above (Lollipop).
 * Milan Geyser
 * Ben Harper
 * Erick Underhill
+
 #### IMQS Interns of 2016 :
 * Arjen Singels
 * Fritz Engelbrecht
