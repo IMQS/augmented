@@ -253,7 +253,7 @@ public class LoginActivity extends AppCompatActivity {
 			conn.setReadTimeout(30000);
 			conn.setInstanceFollowRedirects(true);
 
-			String result = null;
+			String result = "No Intornet";
 			try {
 				conn.setRequestMethod("POST");
 				conn.connect();
@@ -330,7 +330,7 @@ public class LoginActivity extends AppCompatActivity {
 			conn.setReadTimeout(30000);
 			conn.setInstanceFollowRedirects(true);
 
-			String result = null;
+			String result = "No Intornet";
 			try {
 				conn.connect();
 
@@ -341,6 +341,7 @@ public class LoginActivity extends AppCompatActivity {
 					BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
 					String line;
+					result = "";
 					while ((line = reader.readLine()) != null) {
 						result += line;
 					}

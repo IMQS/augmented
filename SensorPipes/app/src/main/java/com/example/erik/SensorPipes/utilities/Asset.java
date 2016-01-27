@@ -2,6 +2,9 @@ package com.example.erik.SensorPipes.utilities;
 
 import android.location.Location;
 
+import com.example.erik.SensorPipes.geometry.Cube;
+import com.example.erik.SensorPipes.geometry.Mesh;
+
 /**
  * Created by fritzonfire on 1/8/16.
  */
@@ -86,6 +89,26 @@ public class Asset implements Cloneable {
 
 	public int get_network_id() {
 		return this.network_id;
+	}
+
+	public String generate_html_info() {
+		StringBuilder s = new StringBuilder();
+
+		s.append("<h3>Asset id</h3>");
+		s.append(id);
+
+		s.append("<h3>Type description</h3>");
+		s.append(type_descr);
+
+		return s.toString();
+	}
+
+	/**3D mesh to be rendered in the AR activity
+	 * Each asset type that extends this superclass should provide their own get_mesh.
+	 * @return Mesh to render.
+	 */
+	public Mesh get_mesh() {
+		return new Cube(1,1,1);
 	}
 }
 

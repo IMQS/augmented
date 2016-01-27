@@ -1,0 +1,15 @@
+html {
+    width: 216px;
+    height: 720px;
+}
+
+body {
+	padding: 15px 15px 15px 15px;
+	margin: 0px auto 0px auto;
+	color: #CFCFCF;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+h3 {
+	color: #00FFCC;
+}

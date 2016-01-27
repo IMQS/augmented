@@ -19,7 +19,7 @@ public class Mesh {
     // Our index buffer.
     private ShortBuffer indicesBuffer = null;
 
-    // The number of indices.
+	// The number of indices.
     private int numOfIndices = -1;
 
     // Flat Color
@@ -204,4 +204,14 @@ public class Mesh {
     public void setPick_id(int pick_id) {
         this.pick_id = pick_id;
     }
+
+	public FloatBuffer getVerticesBuffer() {
+		return verticesBuffer;
+	}
+	public ShortBuffer getIndicesBuffer() {
+		return indicesBuffer;
+	}
+	public int getNumOfIndices() {
+		return numOfIndices;
+	}
 }

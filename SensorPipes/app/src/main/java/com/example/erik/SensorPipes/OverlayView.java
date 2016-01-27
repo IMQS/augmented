@@ -19,7 +19,7 @@ public class OverlayView extends GLSurfaceView {
 		setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 		getHolder().setFormat(PixelFormat.TRANSLUCENT);
 //		renderer = new OverlayRenderer();
-		renderer = new OpenGLRenderer();
+		renderer = new OpenGLRenderer(null);
 
 		sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 		renderer.setOrientationProvider(new ImprovedOrientationSensor1Provider(sensorManager));

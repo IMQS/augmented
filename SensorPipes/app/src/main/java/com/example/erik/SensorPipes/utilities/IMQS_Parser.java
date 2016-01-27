@@ -13,6 +13,7 @@ import com.google.gson.internal.LinkedTreeMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.Objects;
 
 /**
@@ -20,26 +21,26 @@ import java.util.Objects;
  */
 public class IMQS_Parser {
 
-	private Pipe[] pipes;
+	HashMap<Integer, Asset> assetList;
 
 	public IMQS_Parser(String data, double myLat, double myLong) {
 		parseJSON(data, myLat, myLong);
 	}
 
-	public Pipe[] get_Pipes() {
-		return this.pipes;
+	public HashMap<Integer, Asset> get_assets() {
+		return this.assetList;
 	}
 
-	private Pipe[] parseJSON(String unparsed, double myLat, double myLong) {
+	private void parseJSON(String unparsed, double myLat, double myLong) {
 		// id used for selecting and highlighting assets. Has to start at 1, because 0 := no asset selected
 		int id = 1;
-		ArrayList<Pipe> pipeList = new ArrayList<Pipe>();
+		this.assetList = new HashMap<Integer, Asset>();
 
 		try {
-			System.out.println("unparsed: " + unparsed.substring(4));
+			System.out.println("unparsed: " + unparsed);
 
 			Gson gson = new GsonBuilder().create();
-			jRoot root = gson.fromJson(unparsed.substring(4), jRoot.class);
+			jRoot root = gson.fromJson(unparsed, jRoot.class);
 
 			ArrayList<jField> fields = root.Tables.get("g_table_6").Fields;
 			ArrayList<ArrayList<Object>> records = root.Tables.get("g_table_6").Records;
@@ -84,10 +85,10 @@ public class IMQS_Parser {
 								z = gps.get(k + 2);
 								double end[] = {x, y, z};
 
-								segment.setId(id++);
+								segment.setId(id);
 								segment.set_my_location(new double[]{myLong, myLat});
 								segment.set_start_end_coords(start, end);
-								pipeList.add(segment);
+								this.assetList.put(id++, segment);
 							}
 							break;
 
@@ -99,11 +100,5 @@ public class IMQS_Parser {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		this.pipes = new Pipe[pipeList.size()];
-		for (int i = 0; i < this.pipes.length; i++) {
-			this.pipes[i] = pipeList.get(i);
-		}
-		return this.pipes;
 	}
 }
