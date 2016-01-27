@@ -60,6 +60,7 @@ public class ARActivity extends Activity {
 		view.setEGLContextClientVersion(1);
 		view.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 		view.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+		camera_view = new CameraSurfaceView(this);
 		renderer = new OpenGLRenderer(camera_view);
 		renderer.setOrientationProvider(orient);
 		view.setRenderer(renderer);
@@ -82,7 +83,6 @@ public class ARActivity extends Activity {
 			System.exit(0);
 		}
 		if (preview.getChildCount() == 0) {
-			camera_view = new CameraSurfaceView(this);
 			preview.addView(view);
 			preview.addView(camera_view);
 		}

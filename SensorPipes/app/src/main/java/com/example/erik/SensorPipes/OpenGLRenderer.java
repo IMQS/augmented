@@ -90,13 +90,22 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
 
 		if (cameraView != null) {
-			//first convert Rvec to quaternions for opengl rotate to use
-			//EulerToQuat.convertEulerAnglesToQuaternion(cameraView.boardDetected.Rvec.get(0,0)[0], cameraView.boardDetected.Rvec.get(0,1)[0], cameraView.boardDetected.Rvec.get(0,2)[0]);
+			if (cameraView.boardDetected != null && cameraView.boardDetected.Tvec != null) {
+				//use Rvec and Tvec to rotate the camera relative to the board.
+				//gl.glRotatef((float) (2.0f * Math.acos() * 180.0f / Math.PI), -1 * q.getY(), q.getX(), q.getZ());
+				System.out.println(cameraView.boardDetected.Tvec.get(0, 2)[0]);
+				gl.glTranslatef(((float) (cameraView.boardDetected.Tvec.get(0, 0)[0]))*100, ((float) (cameraView.boardDetected.Tvec.get(0, 1)[0]))*100, ((float) (cameraView.boardDetected.Tvec.get(0, 2)[0]))*100);
+				System.out.println("----------------- " + ((float) (cameraView.boardDetected.Tvec.get(0, 0)[0]))*100);
+			}else {
+				//move the camera up a bit
+				gl.glTranslatef(0, 0, -3);
+			}
+			if (cameraView.boardDetected != null && cameraView.boardDetected.Rvec != null) {
+				//first convert Rvec to quaternions for opengl rotate to use
+				//EulerToQuat.convertEulerAnglesToQuaternion(cameraView.boardDetected.Rvec.get(0,0)[0], cameraView.boardDetected.Rvec.get(0,1)[0], cameraView.boardDetected.Rvec.get(0,2)[0]);
 
-			//use Rvec and Tvec to rotate the camera relative to the board.
-			//gl.glRotatef((float) (2.0f * Math.acos() * 180.0f / Math.PI), -1 * q.getY(), q.getX(), q.getZ());
-			gl.glTranslatef(((float) (cameraView.boardDetected.Tvec.get(0, 0)[0]))*100, ((float) (cameraView.boardDetected.Tvec.get(0, 1)[0]))*100, ((float) (cameraView.boardDetected.Tvec.get(0, 2)[0]))*100);
-			System.out.println("----------------- " + ((float) (cameraView.boardDetected.Tvec.get(0, 0)[0]))*100);
+			}
+
 		} else {
 			//move the camera up a bit
 			gl.glTranslatef(0, 0, -3);
