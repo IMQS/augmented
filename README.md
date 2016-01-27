@@ -1,5 +1,5 @@
 # Augmented Reality Asset Viewer
-The goal of the project is to create an android application that will allow a 
+The goal of the project is to create an android application that will allow a
 user to view assets useing his android device. The user will be able to see
 assests that might not be visible to the naked eye at that moment and the user
 will also be able to see more information about any asset by simly taping it on
@@ -25,11 +25,15 @@ NB! your device must be using android api 21 or above (Lollipop).
 6. You sould now beable to view the asset using your android device.
 
 ## Credits
-IMQS
-Milan Geyser
-Ben Harper
-Erick Underhill
-IMQS Interns of 2016
+#### IMQS
+* Milan Geyser
+* Ben Harper
+* Erick Underhill
+#### IMQS Interns of 2016 :
+* Arjen Singels
+* Fritz Engelbrecht
+* Erik Botes
+* Marvin Esterhuizen
 
 ## License
 No officer.
