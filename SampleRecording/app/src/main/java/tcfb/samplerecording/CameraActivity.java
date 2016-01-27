@@ -191,14 +191,14 @@ public class CameraActivity extends AppCompatActivity {
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
-        mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
+        mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_1080P));
 
         mMediaRecorder.setOutputFile(getOutputMediaFile(MEDIA_TYPE_VIDEO).toString());
 
         mMediaRecorder.setPreviewDisplay(mPreview.getHolder().getSurface());
 
         mMediaRecorder.setCaptureRate(60);
-        mMediaRecorder.setMaxDuration(5000);
+        mMediaRecorder.setMaxDuration(30000);
 
         try {
             mMediaRecorder.prepare();
