@@ -5,8 +5,8 @@ package com.example.erik.SensorPipes.utilities;
  */
 public class ColourUtil {
 
-	public final static String PIPE_COLOUR = "3251adff";
-	public final static String PIPE_HIGLIGHT_COLOUR = "328eadff";
+	public final static String PIPE_COLOUR = "3251ad7f";
+	public final static String PIPE_HIGLIGHT_COLOUR = "328ead7f";
 
 	private static String[] colours = {"be4248ff", "ba42beff", "426dbeff", "42b3beff", "42be49ff", "beba42ff"};
 	private static int current_colour = 0;

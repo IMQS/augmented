@@ -72,7 +72,7 @@ public class Pipe extends Asset {
 			float z = 0;
 
 			this.cylinder.set_translation(x, y, z);
-			this.cylinder.setCullEnabled(false);
+			this.cylinder.setCullEnabled(true);
 		}
 		return this.cylinder;
 	}

@@ -116,13 +116,14 @@ public class ARActivity extends Activity {
 		// Set up the info panel WebView
 		info_panel = new WebView(this);
 
+		info_panel.setBackgroundColor(0x00000000);
+
 //		info_panel.loadUrl("file:///android_asset/info_display/index.html");
 
 		info_panel.loadData("<html><body>"
 						+ "..."
 						+ "</body></html>",
 				"text/html", "utf-8");
-
 
 		if (preview == null) {
 			System.out.println("composite is null!");

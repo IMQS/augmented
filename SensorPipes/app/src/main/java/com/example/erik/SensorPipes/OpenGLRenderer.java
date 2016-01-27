@@ -104,7 +104,11 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT,
 				GL10.GL_NICEST);
 
+		gl.glEnable(GL10.GL_BLEND);
+		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+
 		info_view = new TexturedPlane(0.3f, 1f, createTexture(gl));
+		info_view.setCullEnabled(false);
     }
 
     public void onDrawFrame(GL10 gl) {
@@ -139,13 +143,33 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
 		//draw the group of all pipes
 		if (touch_dirty) {
+
+			// Disable blending, otherwise the IDs get mixed
+			gl.glDisable(GL10.GL_BLEND);
 			g.draw_for_picking(gl);
+			gl.glEnable(GL10.GL_BLEND);
 
 			ByteBuffer pixelBuffer = ByteBuffer.allocateDirect(4);
 			pixelBuffer.order(ByteOrder.nativeOrder());
 
 			gl.glReadPixels((int) touch_x, (viewport_height - (int) touch_y), 1, 1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE,
 					pixelBuffer);
+
+
+			/**
+			 * To improve selection, look 10 pixels to all directions from the touched pixel,
+			 * and check which colour / id occurs most in this region.
+			 * If we are closer than that to the edge, just ignore it and look at the one pixel
+			 * that was touched.
+			 *
+			 * This can be improved by getting the amount of pixels in a certain dp for this device,
+			 * and using that, since, for example, 10px will not be the same physical distance on
+			 * say a phone and tablet.
+ 			 */
+
+			int touch_expansion = 10;
+
+
 			byte b[] = new byte[4];
 			pixelBuffer.get(b);
 			last_picked_id = GLObjectPicker.colour_to_int(b);
