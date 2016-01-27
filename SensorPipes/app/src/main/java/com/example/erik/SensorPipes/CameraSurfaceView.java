@@ -10,6 +10,12 @@ import java.io.IOException;
 
 class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
+	private class CVCallback implements Camera.PreviewCallback {
+		public void onPreviewFrame(byte[] frame, Camera camera) {
+
+		}
+	}
+
 	Camera camera;
 
 	CameraSurfaceView(Context context) {
@@ -39,6 +45,7 @@ class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 		try {
 			// Open the Camera in preview mode
 			this.camera = Camera.open();
+			this.camera.setPreviewCallback(new CVCallback());
 			this.camera.setPreviewDisplay(holder);
 		} catch (IOException ioe) {
 			ioe.printStackTrace(System.out);
@@ -51,6 +58,7 @@ class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 		// Surface will be destroyed when replaced with a new screen
 		// Always make sure to release the Camera instance
 		camera.stopPreview();
+		camera.setPreviewCallback(null);
 		camera.release();
 		camera = null;
 	}

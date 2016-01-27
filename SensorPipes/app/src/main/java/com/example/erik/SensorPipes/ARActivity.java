@@ -8,14 +8,13 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Picture;
+import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
@@ -32,7 +31,7 @@ import com.example.erik.SensorPipes.orientationProvider.ImprovedOrientationSenso
 import com.example.erik.SensorPipes.orientationProvider.OrientationProvider;
 import com.example.erik.SensorPipes.utilities.Asset;
 import com.example.erik.SensorPipes.utilities.IMQS_Parser;
-import com.example.erik.SensorPipes.utilities.Pipe;
+
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,6 +43,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ARActivity extends Activity {
+	private final String pref_db = "PREFERENCE";
+
 	/**
 	 * Called when the activity is first created.
 	 */
@@ -78,6 +79,8 @@ public class ARActivity extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+		SharedPreferences prefs = getSharedPreferences(pref_db, Context.MODE_PRIVATE);
+
 		// Set up the OrientationProvider
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		OrientationProvider orient = new ImprovedOrientationSensor1Provider(sensorManager);
@@ -87,67 +90,38 @@ public class ARActivity extends Activity {
 		view.setEGLContextClientVersion(1);
 		view.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 		view.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+
 		renderer = new OpenGLRenderer(this);
+		renderer.setSharedPreferences(prefs);
 		renderer.setOrientationProvider(orient);
 		view.setRenderer(renderer);
 //		setContentView(view);
-
-
 
 		setContentView(R.layout.activity_ar);
 //		info_panel = (WebView) findViewById(R.id.infoPanel);
 
 		Intent intent = getIntent();
 		String data = intent.getStringExtra("DATA");
-		double myLat = intent.getDoubleExtra("Lat", 0.0);
-		double myLong = intent.getDoubleExtra("Long", 0.0);
 
-		IMQS_Parser parser = new IMQS_Parser(data, myLat, myLong);
+		double lat, lng;
+		lat = Double.parseDouble(prefs.getString("latitude", "-33.96525801"));
+		lng = Double.parseDouble(prefs.getString("longitude", "18.83710027"));
+
+		IMQS_Parser parser = new IMQS_Parser(data, lat, lng);
 		assetList = parser.get_assets();
 		renderer.setAssets(assetList);
-
 
 		FrameLayout preview = (FrameLayout) findViewById(R.id.composite);
 
 		// Set up the info panel WebView
-//		LinearLayout web_overlay = new LinearLayout(this);
-//		web_overlay.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-//		web_overlay.setGravity(Gravity.RIGHT);
-//		web_overlay.setWeightSum(1);
-
-//		info_panel = new WebView(this);
 		info_panel = new WebView(this);
-
-		/*
-		info_panel.setPictureListener(new WebView.PictureListener() {
-			@Override
-			public void onNewPicture(WebView view, Picture picture) {
-				System.out.println("loading.." + String.valueOf(view.getProgress()));
-				pic = picture;
-			}
-		});
-		*/
-
-//		info_panel.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
 
 //		info_panel.loadUrl("file:///android_asset/info_display/index.html");
 
-//		info_panel.setViewToGLRenderer(renderer);
 		info_panel.loadData("<html><body>"
 						+ "..."
 						+ "</body></html>",
 				"text/html", "utf-8");
-
-
-		info_panel.setBackgroundColor(0x0066CCFF);
-
-//		web_overlay.addView(info_panel);
-
-
-		FrameLayout gl_web = new FrameLayout(this);
-		gl_web.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-//		gl_web.addView(view);
-		gl_web.addView(info_panel);
 
 
 		if (preview == null) {
@@ -157,7 +131,6 @@ public class ARActivity extends Activity {
 		if (preview.getChildCount() == 0) {
 			camera_view = new CameraSurfaceView(this);
 			preview.addView(view);
-//			preview.addView(info_panel);
 			preview.addView(camera_view);
 		}
 		else {
@@ -165,10 +138,6 @@ public class ARActivity extends Activity {
 			camera_view = null;
 			view = null;
 		}
-
-		// Add the default content to the info panel
-		// Get the locale substring to access the localised assets
-		String localPrefix = Locale.getDefault().getLanguage().substring(0, 2).toLowerCase(Locale.US);
 
 	}
 
@@ -204,9 +173,6 @@ public class ARActivity extends Activity {
 					+ "</body></html>";
 		}
 
-//		info_texture = HTML2Bitmap(info_panel, 720, 720, "file:///android_asset/info_display/", html);
-//		info_texture_dirty = true;
-
 		System.out.println("about to create bitmap...");
 		HTML2Bitmap(info_panel, 720, 720, "file:///android_asset/info_display/", html);
 		System.out.println("... bitmap done");
@@ -226,7 +192,6 @@ public class ARActivity extends Activity {
 
 		if(info_texture!=null)
 		{
-
 			try
 			{
 				if (!file1.exists()) {
@@ -257,91 +222,6 @@ public class ARActivity extends Activity {
 	public void HTML2Bitmap(final WebView w, final int containerWidth, final int containerHeight, final String baseURL, final String content) {
 		System.out.println("START HTML2BITMAP");
 
-		/*
-		final CountDownLatch signal = new CountDownLatch(1);
-		final Bitmap b = Bitmap.createBitmap(containerWidth, containerHeight, Bitmap.Config.ARGB_8888);
-		final AtomicBoolean ready = new AtomicBoolean(false);
-		w.post(new Runnable() {
-
-			@Override
-			public void run() {
-				w.setWebViewClient(new WebViewClient() {
-					@Override
-					public void onPageFinished(WebView view, String url) {
-						ready.set(true);
-					}
-				});
-				w.setPictureListener(new WebView.PictureListener() {
-					@Override
-					public void onNewPicture(WebView view, Picture picture) {
-						if (ready.get()) {
-							final Canvas c = new Canvas(b);
-							view.draw(c);
-							w.setPictureListener(null);
-							signal.countDown();
-						}
-					}
-				});
-				w.layout(0, 0, containerHeight, containerWidth);
-
-				w.loadDataWithBaseURL(baseURL, content, "text/html", "UTF-8", null);
-			}});
-		System.out.println("[ 1 ]");
-		try {
-			signal.await();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		System.out.println("[ 2  ]");
-		return b;
-		*/
-
-/*
-		info_panel.setWebViewClient(new WebViewClient() {
-			public void onPageFinished(WebView wv, String url) {
-				System.out.println("ONPAGEFINISHED()");
-				Picture p = wv.capturePicture();
-				myTimer = new Timer();
-				myTimer.schedule(new TimerTask() {
-					@Override
-					public void run() {
-							Log.w("picture", "finished");
-							cancel();
-							Picture picture = pic;
-
-							Log.w("picture", "onNewPicture- Height" + picture.getHeight());
-							Log.w("picture", "onNewPicture- Width" + picture.getWidth());
-
-							if (picture != null) {
-								Log.w("picture", " P OK");
-								Bitmap image = Bitmap.createBitmap(picture.getWidth(), picture.getHeight(), Bitmap.Config.ARGB_8888);
-								Log.w("picture", "C OK");
-								info_texture = image;
-								System.out.println("info_texture updated");
-							} else {
-								System.out.println("PICTURE IS NULL!! X(");
-							}
-					}
-
-				}, 0, 1000);
-
-				Log.w("picture", "done");
-
-				info_texture_dirty = true;
-			}
-		});
-
-		}
-	catch (Exception e)
-	{
-		e.printStackTrace();
-	}
-
-	webview.setDrawingCacheEnabled(false);
-	}
-
-		*/
-
 		info_panel.loadDataWithBaseURL(baseURL, content, "text/html", "UTF-8", null);
 		info_panel.measure(View.MeasureSpec.makeMeasureSpec(
 						View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED),
@@ -362,32 +242,5 @@ public class ARActivity extends Activity {
 
 
 		System.out.println("END HTML2BITMAP");
-	}
-
-
-	class CustomWebView extends WebView {
-		public CustomWebView( Context context ) {
-			super( context ); // Call WebView's constructor
-
-			setWebChromeClient( new WebChromeClient(){} );
-			setWebViewClient( new WebViewClient() );
-
-			setLayoutParams( new ViewGroup.LayoutParams( TEXTURE_WIDTH, TEXTURE_HEIGHT ) );
-		}
-
-		@Override
-		protected void onDraw( Canvas canvas ) {
-			if ( surface != null ) {
-				// Requires a try/catch for .lockCanvas( null )
-				try {
-					final Canvas surfaceCanvas = surface.lockCanvas( null ); // Android canvas from surface
-					super.onDraw( surfaceCanvas ); // Call the WebView onDraw targetting the canvas
-					surface.unlockCanvasAndPost( surfaceCanvas ); // We're done with the canvas!
-				} catch ( Surface.OutOfResourcesException excp ) {
-					excp.printStackTrace();
-				}
-			}
-			// super.onDraw( canvas ); // <- Uncomment this if you want to show the original view
-		}
 	}
 }

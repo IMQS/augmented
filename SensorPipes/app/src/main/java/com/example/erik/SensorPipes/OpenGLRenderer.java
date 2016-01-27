@@ -8,6 +8,8 @@ import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.opengl.GLSurfaceView;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -29,7 +31,6 @@ import com.example.erik.SensorPipes.utilities.ColourUtil;
 import com.example.erik.SensorPipes.utilities.GLObjectPicker;
 import com.example.erik.SensorPipes.utilities.Hex2float;
 import com.example.erik.SensorPipes.utilities.Pipe;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
 	private SurfaceTexture surfaceTexture = null;
 	Surface surface;
+	private SharedPreferences prefs;
 
 	public final int RENDER_MODE_NORMAL = 0;
 	public final int RENDER_MODE_PICKING = 1;
@@ -57,11 +59,10 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     SmoothColoredSquare smoothSquare = new SmoothColoredSquare();
 
     Plane plane;
-	  float angle = 0;
+	float angle = 0;
     Group g = new Group();
 
 	TexturedPlane info_view;
-
 
 
 	private static final int DEFAULT_TEXTURE_WIDTH = 500;
@@ -130,7 +131,8 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 //		    gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI), q.getX(), q.getY(), q.getZ());
 
 		// For landscape mode, we need to swap the X and Y axes, and invert the new X axis.
-		gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI), -1 * q.getY(), q.getX(), q.getZ());
+		float angle_offset = Float.parseFloat(prefs.getString("angle_offset", "0.0"));
+		gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI) + angle_offset, -1 * q.getY(), q.getX(), q.getZ());
 
 		//move the camera up a bit
 		gl.glTranslatef(0, 0, -3);
@@ -169,7 +171,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 			touch_dirty = false;
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 			gl.glLoadIdentity();
-			gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI), -1 * q.getY(), q.getX(), q.getZ());
+			gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI) + angle_offset, -1 * q.getY(), q.getX(), q.getZ());
 			gl.glTranslatef(0, 0, -3);
 		}
         g.draw_higlighted(gl, last_picked_id);
@@ -252,7 +254,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 		return 0; //XXX
 	}
 
-
 	// The following methods are used for texture creation from the WebView:
 	public Canvas onDrawViewBegin(){
 		mSurfaceCanvas = null;
@@ -285,7 +286,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
 	}
 
-	private int createTexture(GL10 gl){
+	private int createTexture(GL10 gl) {
 		int textureId;
 		int[] textures = new int[1];
 		gl.glGenTextures(1, textures, 0);
@@ -306,24 +307,10 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
 				GL10.GL_REPEAT);
 
-/*
-		int[] textures = new int[1];
-
-		// Generate the texture to where android view will be rendered
-		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-		GLES20.glGenTextures(1, textures, 0);
-		checkGlError("Texture generate");
-
-		GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textures[0]);
-		checkGlError("Texture bind");
-
-		GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GL10.GL_TEXTURE_MIN_FILTER,GL10.GL_LINEAR);
-		GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
-		GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
-		GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
-
-		return textures[0];
-*/
 		return textureId;
+	}
+
+	public void setSharedPreferences(SharedPreferences prefs) {
+		this.prefs = prefs;
 	}
 }
