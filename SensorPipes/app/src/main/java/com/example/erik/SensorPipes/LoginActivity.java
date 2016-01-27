@@ -58,14 +58,14 @@ public class LoginActivity extends AppCompatActivity {
 		login_btn = (Button) findViewById(R.id.login_button);
 		login_btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
-				SharedPreferences prefs = getSharedPreferences(pref_db, Context.MODE_PRIVATE);
-
+				// Get Username and password.
 				EditText mUN = (EditText) findViewById(R.id.edit_un);
 				EditText mPASS = (EditText) findViewById(R.id.edit_pass);
 
 				String text = "Signing in to Server";
 				Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
 
+				// Send credentials to login server
 				SendHTTPLoginTask loginTask = new SendHTTPLoginTask();
 				loginTask.execute(mUN.getText().toString(), mPASS.getText().toString());
 				String answer = "empty";
@@ -75,32 +75,50 @@ public class LoginActivity extends AppCompatActivity {
 					e.printStackTrace();
 				}
 
-				if (answer.startsWith("session=")) {
-					text = "Receiving pipe data";
-					Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-
-					sendGPSLocationTask gpsTask = new sendGPSLocationTask();
-					gpsTask.execute(answer.substring(8));
-
-					try {
-						answer = gpsTask.get();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-
-					startARActivity(answer);
-				} else if (answer.startsWith("error=")) {
+				// Evaluate server response
+				if (!answer.startsWith("session=")) {
 					int code = Integer.parseInt(answer.split("=")[1]);
 
+					// Switch used for future expansion.
 					switch (code) {
 						case 403:
 							makeAlert("Login incorrect", "Your username or password is wrong.");
 							break;
 
 						default:
+							makeAlert(answer, "An error with code:" + code + " has occurred.");
 							break;
 					}
+					return;
 				}
+
+				text = "Requesting pipe data";
+				Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+
+				// Request data from server
+				sendGPSLocationTask gpsTask = new sendGPSLocationTask();
+				gpsTask.execute(answer);
+				try {
+					answer = gpsTask.get();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+				// Evaluate server response (Successful json response starts with an '{')
+				if (answer.charAt(0) != '{') {
+					int code = Integer.parseInt(answer.split("=")[1]);
+
+					// switch used for future expansion.
+					switch (code) {
+						default:
+							makeAlert(answer, "An error with code:" + code + " has occurred.");
+							break;
+					}
+					return;
+				}
+
+				// Switch to camera view with opengl layer.
+				startARActivity(answer);
 			}
 		});
 		login_btn.setEnabled(false);
@@ -121,16 +139,19 @@ public class LoginActivity extends AppCompatActivity {
 				if (!prefs.getBoolean("spoof_gps", false)) {
 					prefs.edit().putString("latitude", location.getLatitude() + "").commit();
 					prefs.edit().putString("longitude", location.getLongitude() + "").commit();
-					System.out.println("************* Location Update ************");
+//					System.out.println("************* Location Update ************");
 					login_btn.setEnabled(true);
 				}
 			}
 
-			public void onStatusChanged(String provider, int status, Bundle extras) {}
+			public void onStatusChanged(String provider, int status, Bundle extras) {
+			}
 
-			public void onProviderEnabled(String provider) {}
+			public void onProviderEnabled(String provider) {
+			}
 
-			public void onProviderDisabled(String provider) {}
+			public void onProviderDisabled(String provider) {
+			}
 		};
 
 		// Register the listener with the Location Manager to receive location updates
@@ -138,10 +159,10 @@ public class LoginActivity extends AppCompatActivity {
 
 		offline_btn = (Button) (findViewById(R.id.offline_button));
 		offline_btn.setOnClickListener(new View.OnClickListener() {
-											 public void onClick(View view) {
-												 startARActivity(responce);
-											 }
-										 }
+										   public void onClick(View view) {
+											   startARActivity(responce);
+										   }
+									   }
 		);
 
 	}
@@ -158,6 +179,11 @@ public class LoginActivity extends AppCompatActivity {
 				.show();
 	}
 
+	/**
+	 * Starts the ARActivity activity with an extra 'DATA'
+	 *
+	 * @params data	unparsed json
+	 */
 	private void startARActivity(String data) {
 		Intent intent = new Intent(this, ARActivity.class);
 		intent.putExtra("DATA", data);
@@ -202,13 +228,15 @@ public class LoginActivity extends AppCompatActivity {
 		@Override
 		protected String doInBackground(String... credentials) {
 
-			HttpURLConnection conn = null;
+			HttpURLConnection conn;
 			SharedPreferences prefs = getSharedPreferences(pref_db, Context.MODE_PRIVATE);
 			try {
 				conn = (HttpURLConnection) new URL(prefs.getString("login_server", "http://uat.imqs.co.za/auth2/login")).openConnection();
 			} catch (Exception e) {
-				System.err.println("WAWAWAWAWAWA");
+				Log.v(TAG, "Can not open connection to login server: "
+						+ prefs.getString("login_server", "http://uat.imqs.co.za/auth2/login"));
 				e.printStackTrace();
+				return "No Internet";
 			}
 
 			String auth = credentials[0] + ":" + credentials[1];
@@ -219,7 +247,7 @@ public class LoginActivity extends AppCompatActivity {
 			conn.setReadTimeout(30000);
 			conn.setInstanceFollowRedirects(true);
 
-			String result = "No Intornet";
+			String result = "No Internet";
 			try {
 				conn.setRequestMethod("POST");
 				conn.connect();
@@ -235,7 +263,7 @@ public class LoginActivity extends AppCompatActivity {
 						break;
 				}
 			} catch (Exception e) {
-				System.err.println("boooo :'(");
+				Log.v(TAG, "Failed to POST login info to server");
 				e.printStackTrace();
 			}
 
@@ -262,28 +290,29 @@ public class LoginActivity extends AppCompatActivity {
 				conn = (HttpURLConnection) new URL(prefs.getString("pull_server", "http://uat.imqs.co.za/db/1/generic/pull")).openConnection();
 				conn.setRequestMethod("POST");
 			} catch (Exception e) {
-				Log.v(TAG, "Can not connect to server");
+				Log.v(TAG, "Can not connect to pull server:"
+						+ prefs.getString("pull_server", "http://uat.imqs.co.za/db/1/generic/pull"));
 				e.printStackTrace();
-				return null;
+				return "No Internet";
 			}
 
-			conn.setRequestProperty("Cookie", "session=" + details[0]);
+			conn.setRequestProperty("Cookie", details[0]);
 			conn.setRequestProperty("Content-Type", "text/plain");
 
-			double yradius = radius / 110.54;
-			double xradius = radius / (111.32 * Math.cos(yradius));
+			double y_radius = radius / 110.54;
+			double x_radius = radius / (111.32 * Math.cos(y_radius));
 			try {
 				String query = "{\"Tables\":{\"g_table_6\":{\"SpatialBoxes\":" +
-						"[[[" + (lng - xradius) + "," + (lat - yradius) +
+						"[[[" + (lng - x_radius) + "," + (lat - y_radius) +
 						"," + lng + "," + lat + "],0]," +
-						"[[" + lng + "," + (lat - yradius) +
-						"," + (lng + xradius) + "," + lat + "],0]," +
-						"[[" + (lng - xradius) + "," + lat + "," +
-						lng + "," + (lat + yradius) + "],0]," +
+						"[[" + lng + "," + (lat - y_radius) +
+						"," + (lng + x_radius) + "," + lat + "],0]," +
+						"[[" + (lng - x_radius) + "," + lat + "," +
+						lng + "," + (lat + y_radius) + "],0]," +
 						"[[" + lng + "," + lat + "," +
-						(lng + xradius) + "," + (lat + yradius) + "],0]]}}}";
+						(lng + x_radius) + "," + (lat + y_radius) + "],0]]}}}";
 
-				Log.v(TAG, query);
+//				Log.v(TAG, query);
 
 				byte[] queryInBytes = query.getBytes("UTF-8");
 				OutputStream os = conn.getOutputStream();
@@ -299,7 +328,7 @@ public class LoginActivity extends AppCompatActivity {
 			conn.setReadTimeout(30000);
 			conn.setInstanceFollowRedirects(true);
 
-			String result = "No Intornet";
+			String result = "No Internet";
 			try {
 				conn.connect();
 
@@ -314,7 +343,7 @@ public class LoginActivity extends AppCompatActivity {
 					while ((line = reader.readLine()) != null) {
 						result += line;
 					}
-					Log.v(TAG, "Finished storing json in sting.");
+//					Log.v(TAG, "Finished storing json in sting.");
 				} else {
 					result = "error=" + conn.getResponseCode();
 				}

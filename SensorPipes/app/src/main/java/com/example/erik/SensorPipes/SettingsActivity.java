@@ -31,11 +31,15 @@ public class SettingsActivity extends AppCompatActivity {
 		save.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
 				EditText latitude, longitude, angle_offset, login_server, pull_server;
-				SharedPreferences prefs = getSharedPreferences(pref_db, Context.MODE_PRIVATE);
+				SharedPreferences prefs;
+				SharedPreferences.Editor edit;
 				Switch marker, spoof;
 
+				prefs = getSharedPreferences(pref_db, Context.MODE_PRIVATE);
+				edit = prefs.edit();
+
 				marker = (Switch) findViewById(R.id.marker_tracker);
-				prefs.edit().putBoolean("marker_tracker", marker.isChecked()).commit();
+				edit.putBoolean("marker_tracker", marker.isChecked());
 
 				spoof = (Switch) findViewById(R.id.gps_spoof);
 
@@ -43,21 +47,22 @@ public class SettingsActivity extends AppCompatActivity {
 					latitude = (EditText) findViewById(R.id.latitude);
 					longitude = (EditText) findViewById(R.id.longitude);
 
-					prefs.edit().putString("latitude", latitude.getText().toString()).commit();
-					prefs.edit().putString("longitude", longitude.getText().toString()).commit();
+					edit.putString("latitude", latitude.getText().toString());
+					edit.putString("longitude", longitude.getText().toString());
 				}
 
-				prefs.edit().putBoolean("spoof_gps", spoof.isChecked()).commit();
+				edit.putBoolean("spoof_gps", spoof.isChecked());
 
 				angle_offset = (EditText) findViewById(R.id.angle_offset);
-				prefs.edit().putString("angle_offset", angle_offset.getText().toString()).commit();
+				edit.putString("angle_offset", angle_offset.getText().toString());
 
 				login_server = (EditText) findViewById(R.id.login_server);
-				prefs.edit().putString("login_server", login_server.getText().toString()).commit();
+				edit.putString("login_server", login_server.getText().toString());
 
 				pull_server = (EditText) findViewById(R.id.pull_server);
-				prefs.edit().putString("pull_server", pull_server.getText().toString()).commit();
+				edit.putString("pull_server", pull_server.getText().toString());
 
+				edit.commit();
 				finish();
 			}
 		});
@@ -65,19 +70,29 @@ public class SettingsActivity extends AppCompatActivity {
 	}
 
 	private void load_defaults() {
+		Switch marker, spoof_gps;
+		EditText latitude, longitude, angle_offset, login_server, pull_server;
 		SharedPreferences prefs = getSharedPreferences(pref_db, Context.MODE_PRIVATE);
 
-		Switch spoof_gps = (Switch) findViewById(R.id.gps_spoof);
+		marker = (Switch) findViewById(R.id.marker_tracker);
+		marker.setChecked(prefs.getBoolean("marker", true));
+
+		spoof_gps = (Switch) findViewById(R.id.gps_spoof);
 		spoof_gps.setChecked(prefs.getBoolean("spoof_gps", false));
 
-		EditText latitude = (EditText) findViewById(R.id.latitude);
+		latitude = (EditText) findViewById(R.id.latitude);
 		latitude.setText(prefs.getString("latitude", "-33.96525801"));
 
-		EditText longitude = (EditText) findViewById(R.id.longitude);
+		longitude = (EditText) findViewById(R.id.longitude);
 		longitude.setText(prefs.getString("longitude", "18.83710027"));
 
-		EditText angle_offset = (EditText) findViewById(R.id.angle_offset);
+		angle_offset = (EditText) findViewById(R.id.angle_offset);
 		angle_offset.setText(prefs.getString("angle_offset", "0.0"));
 
+		login_server = (EditText) findViewById(R.id.login_server);
+		login_server.setText(prefs.getString("login_server", "http://uat.imqs.co.za/auth2/login"));
+
+		pull_server = (EditText) findViewById(R.id.pull_server);
+		pull_server.setText(prefs.getString("pull_server", "http://uat.imqs.co.za/db/1/generic/pull"));
 	}
 }
