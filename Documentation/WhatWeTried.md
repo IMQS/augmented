@@ -5,7 +5,7 @@
 ARToolkit was used on the ARToolkit_integration branch.
 
 ##Recording tool
-A Android application for recording Video and simultaneous sensor data is on the sensor_tracking branch.
+An Android application for recording Video and simultaneous sensor data is on the sensor_tracking branch.
 
 The video records at 30fps. The media recorder is set to 60fps but will default to the highest possible frame rate.
 When using the live feed, from a camera view for example, you will only get up to approximately 16fps.
@@ -18,6 +18,6 @@ Gyrometer samples: For example <Gyro X>, are `Angular speed around the x-axis` .
 Magnetic field samples: `All values are in micro-Tesla (uT) and measure the ambient magnetic field in the X, Y and Z axis` .
 Delta Time: The time in ms since the start of the recording of both the video and the sensor sample recordings.
 
-See <link> for more information.
+See [SensorEvent](http://developer.android.com/reference/android/hardware/SensorEvent.html "SensorEvent") for more information.
 
 NOTE: The Delta Time may not be perfectly synced with the video.
