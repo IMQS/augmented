@@ -4,6 +4,16 @@
 ##ARToolkit
 ARToolkit was used on the ARToolkit_integration branch.
 
+The results obtained were not very good. The OpenGL cube rendered was extremely jittery and often not rendered correctly at all.
+This could be due to bad calibration of the camera (which was done using their tools/code).
+ARToolkit also does not seem to have built in pose estimation. 
+
+Many compilation and setup issues were encountered. Both with missing dependencies and the porting to AndroidStudio.
+
+ARToolkit was scraped and OpenCV/Aruco used instead.
+ARToolkit appears to be well maintained. It should definitely be reconsidered but the general consensus was that OpenCV/Aruco would be much better. The best, given enough time, is to write it ourselves.
+
+
 
 
 ##Recording tool
@@ -16,7 +26,7 @@ The sensor data is recorded into a text file (See format below, **Space seperate
 \[Accel X\] \[Accel Y\] \[Accel Z\] \[Gyro X\] \[Gyro Y\] \[Gyro Z\] \[MagField X\] \[MagField y\] \[MagField z\] \[Delta time\]
 
 Accelerometer samples: For example <Accel X>, are `Acceleration minus Gx on the x-axis` .
-Gyrometer samples: For example <Gyro X>, are `Angular speed around the x-axis` .
+Gyroscope samples: For example <Gyro X>, are `Angular speed around the x-axis` .
 Magnetic field samples: `All values are in micro-Tesla (uT) and measure the ambient magnetic field in the X, Y and Z axis` .
 Delta Time: The time in ms since the start of the recording of both the video and the sensor sample recordings.
 
