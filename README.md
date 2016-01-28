@@ -35,7 +35,7 @@ NB! your device must be using android API 21 or above (Lollipop).
 * Fritz Engelbrecht
 * Erik Botes
 * Marvin Esterhuizen
-![ThunderCougerFalconBird](thundercougarfalconbird-logo.png)
+![ThunderCougerFalconBird](Images/thundercougarfalconbird-logo.png)
 
 ## License
 No officer.
