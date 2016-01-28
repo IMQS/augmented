@@ -34,6 +34,7 @@ import com.example.erik.SensorPipes.utilities.Pipe;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.HashMap;
+import java.util.Map;
 
 public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
@@ -52,6 +53,9 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 	private float touch_x = 0f, touch_y = 0f;
 	private int last_picked_id = 0;
 	private boolean touch_dirty = false;
+
+	private int touch_scan_width = 25;
+	private int touch_scan_height = 25;
 
     OrientationProvider orient;
 
@@ -149,11 +153,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 			g.draw_for_picking(gl);
 			gl.glEnable(GL10.GL_BLEND);
 
-			ByteBuffer pixelBuffer = ByteBuffer.allocateDirect(4);
-			pixelBuffer.order(ByteOrder.nativeOrder());
-
-			gl.glReadPixels((int) touch_x, (viewport_height - (int) touch_y), 1, 1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE,
-					pixelBuffer);
 
 
 			/**
@@ -166,13 +165,79 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 			 * and using that, since, for example, 10px will not be the same physical distance on
 			 * say a phone and tablet.
  			 */
+//			HashMap<Integer, Integer> min_ids;
+			int x = (int) touch_x;
+			int y = (int) touch_y;
 
-			int touch_expansion = 10;
+			last_picked_id = 0;
+			// Are we further than the scan distancee from the edge?
+			if (	(x > touch_scan_width)
+				&&	(x < (viewport_width - touch_scan_width))
+				&&	(y > touch_scan_height)
+				&&	(y < (viewport_height - touch_scan_height))) {
 
+				System.out.println("TOUCH WITHIN BOUNDRIES");
 
-			byte b[] = new byte[4];
-			pixelBuffer.get(b);
-			last_picked_id = GLObjectPicker.colour_to_int(b);
+//				min_ids = new HashMap<Integer, Integer>();
+
+				int min_dist = Integer.MAX_VALUE;
+				int xx, yy, distance, id = 0;
+				for (int i = -1*touch_scan_width; i < touch_scan_width; i++) {
+					for (int j = -1*touch_scan_height; j < touch_scan_height; j++) {
+						xx = x + i;
+						yy = y + j;
+
+						ByteBuffer pixelBuffer = ByteBuffer.allocateDirect(4);
+						pixelBuffer.order(ByteOrder.nativeOrder());
+						gl.glReadPixels(xx, (viewport_height - yy), 1, 1,
+								GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
+						byte b[] = new byte[4];
+						pixelBuffer.get(b);
+						id = GLObjectPicker.colour_to_int(b);
+
+						if (id == 0 ) {
+							continue;
+						}
+
+						distance = (int) Math.sqrt( (x - xx)*(x - xx) + (y - yy)*(y - yy) );
+//						if (id != 0) {
+//							System.out.printf("[ %2d ]  [ %2d ]  |  id: %3d  |  dist: %3d\n", xx, yy, id, distance);
+//						}
+
+//						if (distance < min_dist) {
+//							if (min_ids.containsKey(id) && id != 0) {
+//								if (min_ids.get(id) > distance) {
+//									min_ids.put(id, distance);
+//								}
+//							} else {
+//								min_ids.put(id, distance);
+//							}
+//						}
+
+						if (distance < min_dist) {
+							last_picked_id = id;
+							min_dist = distance;
+						}
+					}
+				}
+//				for (int i : min_ids.keySet()) {
+//					if (min_ids.get(i) < min_dist) {
+//						min_dist = min_ids.get(i);
+//						last_picked_id = i;
+//					}
+//				}
+//				min_ids = null;
+			} else {
+				System.out.println("TOUCH NOT WITHIN BOUNDRIES");
+				ByteBuffer pixelBuffer = ByteBuffer.allocateDirect(4);
+				pixelBuffer.order(ByteOrder.nativeOrder());
+				gl.glReadPixels((int) touch_x, (viewport_height - (int) touch_y), 1, 1,
+						GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
+				byte b[] = new byte[4];
+				pixelBuffer.get(b);
+				last_picked_id = GLObjectPicker.colour_to_int(b);
+			}
+
 			System.out.println("*****************************************");
 			System.out.println("*     YOU TOUCHED ME!!    (づ￣ ³￣)づ   *");
 			System.out.println("*          X:  " + touch_x);
