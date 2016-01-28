@@ -30,11 +30,12 @@ NB! your device must be using android API 21 or above (Lollipop).
 * Ben Harper
 * Erick Underhill
 
-#### IMQS Interns of 2016 :
+#### IMQS Interns of 2016 aka team ThunderCougerFalconBird:
 * Arjen Singels
 * Fritz Engelbrecht
 * Erik Botes
 * Marvin Esterhuizen
+![ThunderCougerFalconBird](thundercougarfalconbird-logo.png)
 
 ## License
 No officer.

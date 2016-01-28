@@ -6,7 +6,7 @@ ARToolkit was used on the ARToolkit_integration branch.
 
 The results obtained were not very good. The OpenGL cube rendered was extremely jittery and often not rendered correctly at all.
 This could be due to bad calibration of the camera (which was done using their tools/code).
-ARToolkit also does not seem to have built in pose estimation. 
+ARToolkit also does not seem to have built in pose estimation.
 
 Many compilation and setup issues were encountered. Both with missing dependencies and the porting to AndroidStudio.
 
@@ -23,6 +23,7 @@ The video records at 30fps. The media recorder is set to 60fps but will default 
 When using the live feed, from a camera view for example, you will only get up to approximately 16fps.
 
 The sensor data is recorded into a text file (See format below, **Space seperated**).
+
 \[Accel X\] \[Accel Y\] \[Accel Z\] \[Gyro X\] \[Gyro Y\] \[Gyro Z\] \[MagField X\] \[MagField y\] \[MagField z\] \[Delta time\]
 
 Accelerometer samples: For example <Accel X>, are `Acceleration minus Gx on the x-axis` .

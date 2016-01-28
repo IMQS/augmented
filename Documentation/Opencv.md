@@ -7,6 +7,9 @@ The java code is called directly or via the JNI (Java Native Interface).
 
 ##Usage
 
+####Camera calibration
+We used OpenCV to obtain the camera parameters.
+
 
 ##Improvements & suggestions
 Ideally the whole project should use Native OpenCV 3.1 as it uses the latest
