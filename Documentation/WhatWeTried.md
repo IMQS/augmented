@@ -45,7 +45,8 @@ FORMAT:
 
 See [SensorEvent](http://developer.android.com/reference/android/hardware/SensorEvent.html "SensorEvent API page on developer.android") for more information.
 
+NOTE: The Delta Time may not be perfectly synced with the video.
+
 ##The glorious rotation vector
 The rotation that is recieved from the OpenCV is a Euler angle while OpenGL extects a Quaternion as the argument for glRotate. There were issues with the conversion from Euler angles to Quaternions. One option is to use the translation and rotation vectors to manually create the view matrix for OpenGL. We tried this...and failed. Have fun
 
-NOTE: The Delta Time may not be perfectly synced with the video.
