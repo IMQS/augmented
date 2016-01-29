@@ -28,6 +28,12 @@ When using the live feed, from a camera view for example, you will only get up t
 
 The sensor data is recorded into a text file (See format below, **Space seperated**).
 
+Both the text file and the video filenames are formated by the date and start time of the recording.
+
+The files appear to record to the /storage/emulated/0/pictures and not the pictures folder of the SD card.
+
+FORMAT:
+
 \[Accel X\] \[Accel Y\] \[Accel Z\] \[Gyro X\] \[Gyro Y\] \[Gyro Z\] \[MagField X\] \[MagField y\] \[MagField z\] \[Delta time\]
 
 * Accelerometer samples: For example <Accel X>, are `Acceleration minus Gx on the x-axis` .
