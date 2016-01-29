@@ -1,5 +1,12 @@
 #What we tried
 
+##Prototyping environment
+The purpose of developing a Prototyping environment was to minimize iteration time when developing and testing
+the AR algorithms.
+
+The [Recording tool](#RecordingT) (on branch `sensor_tracking`) forms an integral part of this process.
+
+Prototyping of algorithms is best done in cpp ,using cpp OpenCV, on a PC using a dedicated camera (eg webcam in laptop).
 
 ##ARToolkit
 ARToolkit was used on the `ARToolkit_integration` branch.
@@ -12,13 +19,6 @@ Many compilation and setup issues were encountered. Both with missing dependenci
 
 ARToolkit was scraped and OpenCV/Aruco used instead.
 
-##Prototyping environment
-The purpose of developing a Prototyping environment was to minimize iteration time when developing and testing
-the AR algorithms.
-
-The [Recording tool](#RecordingT) (on branch `sensor_tracking`) forms an integral part of this process.
-
-Prototyping of algorithms is best done in cpp ,using cpp OpenCV, on a PC using a dedicated camera (eg webcam in laptop).
 
 ##<a name=RecordingT>Recording tool</a>
 An Android application for recording Video and simultaneous sensor data is on the `sensor_tracking` branch.
