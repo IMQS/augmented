@@ -11,13 +11,17 @@ ARToolkit also does not seem to have built in pose estimation.
 Many compilation and setup issues were encountered. Both with missing dependencies and the porting to AndroidStudio.
 
 ARToolkit was scraped and OpenCV/Aruco used instead.
-ARToolkit appears to be well maintained. It should definitely be reconsidered but the general consensus was that OpenCV/Aruco would be much better. The best, given enough time, is to write it ourselves.
 
+##Prototyping environment
+The purpose of developing a Prototyping environment was to minimize iteration time when developing and testing
+the AR algorithms.
 
+The Recording tool (on branch `sensor_tracking`) forms an integral part of this process.
 
+Prototyping of algorithms is best done in cpp ,using cpp OpenCV, on a PC using a dedicated camera (eg webcam in laptop).
 
 ##Recording tool
-An Android application for recording Video and simultaneous sensor data is on the sensor_tracking branch.
+An Android application for recording Video and simultaneous sensor data is on the `sensor_tracking` branch.
 
 The video records at 30fps. The media recorder is set to 60fps but will default to the highest possible frame rate.
 When using the live feed, from a camera view for example, you will only get up to approximately 16fps.
@@ -29,8 +33,8 @@ The sensor data is recorded into a text file (See format below, **Space seperate
 Accelerometer samples: For example <Accel X>, are `Acceleration minus Gx on the x-axis` .
 Gyroscope samples: For example <Gyro X>, are `Angular speed around the x-axis` .
 Magnetic field samples: `All values are in micro-Tesla (uT) and measure the ambient magnetic field in the X, Y and Z axis` .
-Delta Time: The time in ms since the start of the recording of both the video and the sensor sample recordings.
+Delta Time: The time in milliseconds since the start of the recording of both the video and the sensor sample recordings.
 
-See [SensorEvent](http://developer.android.com/reference/android/hardware/SensorEvent.html "SensorEvent API page on developer.andoroid") for more information.
+See [SensorEvent](http://developer.android.com/reference/android/hardware/SensorEvent.html "SensorEvent API page on developer.android") for more information.
 
 NOTE: The Delta Time may not be perfectly synced with the video.
