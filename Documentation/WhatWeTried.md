@@ -2,7 +2,7 @@
 
 
 ##ARToolkit
-ARToolkit was used on the ARToolkit_integration branch.
+ARToolkit was used on the `ARToolkit_integration` branch.
 
 The results obtained were not very good. The OpenGL cube rendered was extremely jittery and often not rendered correctly at all.
 This could be due to bad calibration of the camera (which was done using their tools/code).
@@ -16,14 +16,14 @@ ARToolkit was scraped and OpenCV/Aruco used instead.
 The purpose of developing a Prototyping environment was to minimize iteration time when developing and testing
 the AR algorithms.
 
-The Recording tool (on branch `sensor_tracking`) forms an integral part of this process.
+The [Recording tool](#RecordingT) (on branch `sensor_tracking`) forms an integral part of this process.
 
 Prototyping of algorithms is best done in cpp ,using cpp OpenCV, on a PC using a dedicated camera (eg webcam in laptop).
 
-##Recording tool
+##<a name=RecordingT>Recording tool</a>
 An Android application for recording Video and simultaneous sensor data is on the `sensor_tracking` branch.
 
-The video records at 30fps. The media recorder is set to 60fps but will default to the highest possible frame rate.
+The video records at 30fps to a .mp4 file. The media recorder is set to 60fps but will default to the highest possible frame rate.
 When using the live feed, from a camera view for example, you will only get up to approximately 16fps.
 
 The sensor data is recorded into a text file (See format below, **Space seperated**).
