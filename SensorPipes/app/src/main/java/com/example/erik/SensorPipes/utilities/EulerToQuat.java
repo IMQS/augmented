@@ -11,9 +11,13 @@ public class EulerToQuat {
         //yRot = attitude (pitch)
         //zRot = heading (yaw)
         //xRot = bank (roll)
-        double yRot = yRotation * Math.PI/360;
-        double zRot = zRotation * Math.PI/360;
-        double xRot = xRotation * Math.PI/360;
+        //double yRot = yRotation * Math.PI/360;
+        //double zRot = zRotation * Math.PI/360;
+        //double xRot = xRotation;
+        double yRot = yRotation;
+        double zRot = zRotation;
+        double xRot = xRotation;
+
 
         //Your last chance to look away!
         double [] quaternion = new double[4];

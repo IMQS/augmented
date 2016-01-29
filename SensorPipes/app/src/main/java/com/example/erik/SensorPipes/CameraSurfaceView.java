@@ -14,6 +14,8 @@ import android.view.SurfaceView;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import es.ava.aruco.Board;
@@ -22,8 +24,11 @@ import es.ava.aruco.BoardDetector;
 import es.ava.aruco.CameraParameters;
 import es.ava.aruco.Marker;
 import es.ava.aruco.MarkerDetector;
+import es.ava.aruco.Utils;
+import es.ava.aruco.exceptions.CPException;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.MissingFormatArgumentException;
 import java.util.Vector;
 
@@ -32,16 +37,37 @@ class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
 	/* Aruco things and board configuration */
 	public final static int numBuffers = 10;
-	public final static double[] cameraMatrix =  {3.5940654374921087e+02, 0., 1.6747001104532444e+02, 0.,
+	/*public final static double[] cameraMatrix =  {3.5940654374921087e+02, 0., 1.6747001104532444e+02, 0.,
 			3.5885540304154000e+02, 1.1343682346741998e+02, 0., 0., 1. };
-	public final static double[] distortionMatrix =  { 1.0096514128783986e-01, 6.8812602979104931e-01,
-			-7.4430379376755349e-03, 4.9815116529327295e-04,
-			-3.8218497442838379e+00 };
-	public final static int height = 240, width = 320;
-	public final static float markerSize = 0.034f;
 	public final int[] ids = {	4, 	 161, 739,
 								463, 59,  521,
 								546, 987, 12 };
+	public final static float markerSize = 0.034f;
+	public final static double[] distortionMatrix =  { 1.0096514128783986e-01, 6.8812602979104931e-01,
+			-7.4430379376755349e-03, 4.9815116529327295e-04,
+			-3.8218497442838379e+00 };*/
+
+
+	public final static double[] cameraMatrix = {
+			1.0362012241605178e+03, 0., 6.6315238818418379e+02,
+			0., 1.0362012241605178e+03, 3.5829450976451926e+02,
+			0., 0., 1.
+	};
+	public final static double[] distortionMatrix = {
+			1.6605223878769676e-01, -1.8693046379956177e-01,
+			-6.1050784647111540e-03, -6.1688408552766126e-03,
+			-4.3692550609131953e-01
+	};
+
+	public final static float markerSize = 0.134f;
+//	public final static float markerSize = 2.f;
+
+	public final static int height = 720, width = 1280;
+	public final int[] ids = {
+			963, 481, 103,
+			402, 419, 406,
+			374,  29, 31
+	};
 
 	private BoardConfiguration bConf;
 
@@ -66,20 +92,36 @@ class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 			boardDetected = new Board();
 			BoardDetector bd = new BoardDetector();
 			Vector<Marker> mDetectedMarkers = new Vector<Marker>();
+			Marker m = null;
 			//if (tcount % 10 == 0)
-			Log.i("CALLBACK", "CALLING DETECT------------------------");
+			//Log.i("CALLBACK", "CALLING DETECT------------------------");
 			busyProccessing = true;
 			myuv.put(0, 0, params[0]);
 			Imgproc.cvtColor(myuv, mrgba, Imgproc.COLOR_YUV2RGBA_NV21, 4);
 
 			md.detect(mrgba, mDetectedMarkers, camParams, markerSize, mrgba);
-			prob = bd.detect(mDetectedMarkers, bConf, boardDetected, camParams, markerSize);
-			//Log.i("CALLBACK", "R: " + boardDetected.Rvec.dump() + "\n" + boardDetected.Tvec.dump());
-			vecs[0] = boardDetected.Tvec; vecs[1] = boardDetected.Rvec;
+			//Log.i("MARKER NUM", String.valueOf(mDetectedMarkers.size()));
+			if (mDetectedMarkers.size() != 0) {
+				m = mDetectedMarkers.get(0);
+				//prob = bd.detect(mDetectedMarkers, bConf, boardDetected, camParams, markerSize);
+				rtvecs[0] = m.Rvec; rtvecs[1] = m.Tvec;
+				System.out.printf("%.3f %.3f %.3f   %.3f %.3f %.3f\n",
+						m.Rvec.get(0, 0)[0], m.Rvec.get(1, 0)[0], m.Rvec.get(2, 0)[0],
+						m.Tvec.get(0, 0)[0], m.Tvec.get(1, 0)[0], m.Tvec.get(2, 0)[0]);
 
-			if (camera != null)
+				//Log.i("ROTATION||R", rtvecs[0].get(0,0)[0] + " " + rtvecs[0].get(1, 0)[0] + " " + rtvecs[0].get(2, 0)[0]);
+				//Log.i("ROTATION||T", rtvecs[1].get(0,0)[0] + " " + rtvecs[1].get(1, 0)[0] + " " + rtvecs[1].get(2, 0)[0]);
+				OpenGLRenderer.updateVecs(rtvecs[0], rtvecs[1]);
+
+				busyProccessing = false;
+			} else {
+			//	Log.i("MARKER", "NO MARKER");
+				rtvecs[0] = new Mat(3, 1, CvType.CV_32F);
+				rtvecs[1] = new Mat(3, 1, CvType.CV_32F);
+			}
+			if (camera != null) {
 				camera.addCallbackBuffer(params[0]);
-			busyProccessing = false;
+			}
 			return null;
 		}
 
@@ -115,7 +157,7 @@ class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 		SurfaceHolder holder = this.getHolder();
 		holder.addCallback(this);
 
-		camParams.cameraMatrix.put(0, 0, 	cameraMatrix[0], cameraMatrix[1], cameraMatrix[2],
+		camParams.cameraMatrix.put(0, 0, cameraMatrix[0], cameraMatrix[1], cameraMatrix[2],
 				cameraMatrix[3], cameraMatrix[4], cameraMatrix[5],
 				cameraMatrix[6], cameraMatrix[7], cameraMatrix[8]);
 		camParams.distorsionMatrix.fromArray(distortionMatrix);
@@ -132,6 +174,7 @@ class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 			}
 		}
 		bConf = new BoardConfiguration(3, 3, markerIds, 100, 20);
+		boardDetected = new Board();
 		rtvecs[0] = new Mat();
 		rtvecs[1] = new Mat();
 	}
@@ -148,7 +191,9 @@ class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 		// any pictures
 
 		cp = camera.getParameters();
-		cp.setPreviewSize(320, 240);
+		List<Camera.Size> s = cp.getSupportedPreviewSizes();
+		for (Camera.Size size : s) Log.i("SIZE", size.width + ": " + size.height);
+		cp.setPreviewSize(this.width, this.height);
 		camera.setParameters(cp);
 		camera.startPreview();
 	}
@@ -160,13 +205,16 @@ class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 			this.camera = Camera.open();
 			Camera.Size s = this.camera.getParameters().getPreviewSize();
 			int format = this.camera.getParameters().getPreviewFormat();
-			int bpi = s.height*s.width*(ImageFormat.getBitsPerPixel(format)/8);
+			//int bpi = s.height*s.width*(ImageFormat.getBitsPerPixel(format)/8);
+			int f = 1382400;
 
-			cameraFrameBuffers = new byte[numBuffers][bpi];
+			cameraFrameBuffers = new byte[numBuffers][f];
+
 			for (int i = 0; i < numBuffers; i++) {
 				this.camera.addCallbackBuffer(cameraFrameBuffers[i]);
 			}
 			this.camera.setPreviewCallbackWithBuffer(new CVCallback());
+			//this.camera.setPreviewCallbackWithBuffer(new CVCallback());
 
 
 			this.camera.setPreviewDisplay(holder);

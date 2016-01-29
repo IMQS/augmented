@@ -38,8 +38,8 @@ public class Marker extends MatOfPoint2f implements Comparable<Marker>{
 	private Code code; // a matrix of integer representing the code (see the class to further explanation)
 	
 	private Mat mat; // the cvMat of the CANONICAL marker (not the one taken from the capture)
-	private Mat Rvec;
-	private Mat Tvec;
+	public Mat Rvec;
+	public Mat Tvec;
 	
 	private Vector<Point> points;
 	

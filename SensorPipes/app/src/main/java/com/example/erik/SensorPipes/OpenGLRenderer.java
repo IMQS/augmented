@@ -8,6 +8,8 @@ import android.opengl.GLSurfaceView;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 import android.opengl.GLU;
+import android.util.Log;
+
 import com.example.erik.SensorPipes.geometry.SmoothColoredSquare;
 import com.example.erik.SensorPipes.geometry.Cylinder;
 import com.example.erik.SensorPipes.geometry.FlatColoredSquare;
@@ -16,11 +18,18 @@ import com.example.erik.SensorPipes.geometry.Plane;
 import com.example.erik.SensorPipes.orientationProvider.OrientationProvider;
 import com.example.erik.SensorPipes.representation.Quaternion;
 import com.example.erik.SensorPipes.utilities.ColourUtil;
+import com.example.erik.SensorPipes.utilities.EulerToQuat;
 import com.example.erik.SensorPipes.utilities.GLObjectPicker;
 import com.example.erik.SensorPipes.utilities.Hex2float;
 import com.example.erik.SensorPipes.utilities.Pipe;
+
+import org.opencv.calib3d.Calib3d;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 
 public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
@@ -34,6 +43,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 	private int last_picked_id = 0;
 	private boolean touch_dirty = false;
 	private CameraSurfaceView cameraView;
+	private static Mat[] vecs = new Mat[2];
 
 
     OrientationProvider orient;
@@ -45,8 +55,13 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 	  float angle = 0;
     Group g = new Group();
 
+	public static void updateVecs(Mat rvec, Mat tvec) {
+		vecs[0] = rvec; vecs[1] = tvec;
+	}
+
     public OpenGLRenderer(CameraSurfaceView cameraView) {
-        plane = new Plane(2,2);
+		float planesize = 0.134f;
+        plane = new Plane(planesize, planesize);
         plane.setColor(1f, 1f, 1f, 1f);
 		this.cameraView = cameraView;
     }
@@ -78,6 +93,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 		* TODO: figure out why
 		*/
 
+
 	   // Get the rotation from the current orientationProvider as quaternion
 		Quaternion q = orient.getQuaternion();
 
@@ -86,26 +102,70 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 //		gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI), q.getX(), q.getY(), q.getZ());
 
 		// For landscape mode, we need to swap the X and Y axes, and invert the new X axis.
-		gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI), -1 * q.getY(), q.getX(), q.getZ());
+		//gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI), -1 * q.getY(), q.getX(), q.getZ());
 
 
 		if (cameraView != null) {
-			if (cameraView.boardDetected != null && cameraView.boardDetected.Tvec != null) {
-				//use Rvec and Tvec to rotate the camera relative to the board.
-				//gl.glRotatef((float) (2.0f * Math.acos() * 180.0f / Math.PI), -1 * q.getY(), q.getX(), q.getZ());
-				System.out.println(cameraView.boardDetected.Tvec.get(0, 2)[0]);
-				gl.glTranslatef(((float) (cameraView.boardDetected.Tvec.get(0, 0)[0]))*100, ((float) (cameraView.boardDetected.Tvec.get(0, 1)[0]))*100, ((float) (cameraView.boardDetected.Tvec.get(0, 2)[0]))*100);
-				System.out.println("----------------- " + ((float) (cameraView.boardDetected.Tvec.get(0, 0)[0]))*100);
-			}else {
-				//move the camera up a bit
-				gl.glTranslatef(0, 0, -3);
-			}
-			if (cameraView.boardDetected != null && cameraView.boardDetected.Rvec != null) {
-				//first convert Rvec to quaternions for opengl rotate to use
-				//EulerToQuat.convertEulerAnglesToQuaternion(cameraView.boardDetected.Rvec.get(0,0)[0], cameraView.boardDetected.Rvec.get(0,1)[0], cameraView.boardDetected.Rvec.get(0,2)[0]);
+			if (vecs[0] != null && vecs[1] != null) {
+				//Mat rotation = Mat.zeros(3,3, CvType.CV_32F), viewmatrix = Mat.zeros(4, 4, CvType.CV_32F);
+//				Log.i("NOT NULL VECS", "VECS ARE NOT NULL------------------YAY");
+				//Log.i("VEC DUMP", vecs[0].dump());
+//				Log.i("VEC DUMP", vecs[1].dump());
+				/* Construct view matrix */
+				/*Calib3d.Rodrigues(vecs[0], rotation);
+				Log.i("SOME THINGS", rotation.dump());
+				for (int row = 0; row < 3; row++) {
+					for (int col = 0; col < 3; col++) {
+						viewmatrix.put(row, col, rotation.get(row, col));
+					}
+					viewmatrix.put(row, 3, vecs[1].get(row, 0));
+				}
+				viewmatrix.put(3, 3, 1.0f);
 
-			}
+				Mat cv2gl = Mat.zeros(4,4, CvType.CV_32F);
+				cv2gl.put(0, 0, 1.f);
+				cv2gl.put(1, 1, -1.f);
+				cv2gl.put(2, 2, -1.f);
+				cv2gl.put(3, 3, 1.f);
 
+				//viewmatrix = viewmatrix.mul(cv2gl);
+				viewmatrix = cv2gl.mul(viewmatrix);
+
+				Mat glviewmatrix;
+				glviewmatrix = viewmatrix;
+				glviewmatrix = glviewmatrix.t();
+
+				float[] viewbuf = {
+						(float) glviewmatrix.get(0, 0)[0], (float) glviewmatrix.get(0, 1)[0], (float) glviewmatrix.get(0, 2)[0], (float) glviewmatrix.get(0, 3)[0],
+						(float) glviewmatrix.get(1, 0)[0], (float) glviewmatrix.get(1, 1)[0], (float) glviewmatrix.get(1, 2)[0], (float) glviewmatrix.get(1, 3)[0],
+						(float) glviewmatrix.get(2, 0)[0], (float) glviewmatrix.get(2, 1)[0], (float) glviewmatrix.get(2, 2)[0], (float) glviewmatrix.get(2, 3)[0],
+						(float) glviewmatrix.get(3, 0)[0], (float) glviewmatrix.get(3, 1)[0], (float) glviewmatrix.get(3, 2)[0], (float) glviewmatrix.get(3, 3)[0],
+				};
+
+
+				glviewmatrix.get(0,0, viewbuf);
+				gl.glMultMatrixf(viewbuf, 0);*/
+				float scale = 1.0f;
+				gl.glRotatef((float) (2.0f * Math.acos(q.getW()) * 180.0f / Math.PI), -1 * q.getY(), q.getX(), q.getZ());
+				gl.glTranslatef((float) vecs[1].get(0, 0)[0] * scale, -(float) vecs[1].get(1, 0)[0] * scale, -(float) vecs[1].get(2, 0)[0] * scale);
+
+
+				double[] rvecd = EulerToQuat.convertEulerAnglesToQuaternion(vecs[0].get(0,0)[0], vecs[0].get(1, 0)[0], vecs[0].get(2, 0)[0]);
+			//	gl.glRotatef((float) (2.0f * Math.acos(rvecd[0]) * 180.0f / Math.PI), (float)(-1*rvecd[2]), (float)rvecd[1], (float)rvecd[3]);
+				//gl.glRotatef((float)(vecs[0].get(0,0)[0]*57.2958), 1.0f, 0.0f, 0.0f);
+				//gl.glRotatef((float)(vecs[0].get(1,0)[0]*57.2958), 0.0f, 1.0f, 0.0f);
+				//gl.glRotatef((float)(vecs[0].get(2,0)[0]*57.2958), 0.0f, 0.0f, 1.0f);
+
+				//gl.glRotatef((float)(vecs[0].get(0,0)[0]*57.2958), 0.0f, 0.0f, 1.0f);
+			//	gl.glRotatef((float)(vecs[0].get(1,0)[0]*57.2958), 0.0f, 1.0f, 0.0f);
+				//gl.glRotatef((float)(vecs[0].get(2,0)[0]*57.2958), 0.0f, 0.0f, 1.0f);
+
+
+				//Log.i("ROTATION", Arrays.toString(rvecd));
+				//Log.i("ROTATION", vecs[0].get(0,0)[0] + " " + vecs[0].get(1, 0)[0] + " " + vecs[0].get(2, 0)[0]);
+			} else {
+//				Log.i("NULL VECS", "VECS ARE NULL------------------NAY");
+			}
 		} else {
 			//move the camera up a bit
 			gl.glTranslatef(0, 0, -3);
