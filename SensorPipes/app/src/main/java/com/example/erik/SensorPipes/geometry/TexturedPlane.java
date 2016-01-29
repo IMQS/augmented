@@ -23,7 +23,6 @@ public class TexturedPlane extends Mesh {
 	private boolean cull_enabled = false;
 
 	public TexturedPlane(float width, float height, int textureId) {
-		System.out.println("=============================\nTextureId: " + textureId + "\n=============================\\");
 		this.textureId = textureId;
 		float vertices[] = {
 				-0.5f * width,  0.5f*height, 0.0f,  // 0, Top Left
@@ -49,10 +48,8 @@ public class TexturedPlane extends Mesh {
 	}
 
 	public void loadBitmap(Bitmap bitmap) {
-		System.out.println("LOADING BITMAP...");
 		this.tex_bmp = bitmap;
 		mShouldLoadTexture = true;
-		System.out.println("DONE LOADING BITMAP...");
 	}
 
 	protected void setTextureCoordinates(float[] textureCoords) {
@@ -67,7 +64,6 @@ public class TexturedPlane extends Mesh {
 	}
 
 	private void loadGLTexture(GL10 gl) {
-		System.out.println("LOADING TEXTURE...");
 		// Generate one texture pointer...
 		int[] textures = new int[1];
 		gl.glGenTextures(1, textures, 0);
@@ -91,7 +87,6 @@ public class TexturedPlane extends Mesh {
 		// Use the Android GLUtils to specify a two-dimensional texture image
 		// from our bitmap
 		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, tex_bmp, 0);
-		System.out.println("DONE LOADING TEXTURE...");
 	}
 
 

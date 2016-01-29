@@ -1,31 +1,25 @@
 package com.example.erik.SensorPipes;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Picture;
 import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
+import android.util.Log;
 import android.view.MotionEvent;
-import android.view.Surface;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 import com.example.erik.SensorPipes.orientationProvider.ImprovedOrientationSensor1Provider;
 import com.example.erik.SensorPipes.orientationProvider.OrientationProvider;
@@ -36,41 +30,29 @@ import com.example.erik.SensorPipes.utilities.IMQS_Parser;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ARActivity extends Activity {
-	private final String pref_db = "PREFERENCE";
-
 	/**
 	 * Called when the activity is first created.
 	 */
+
+	private final String pref_db = "PREFERENCE";
 	SensorManager sensorManager;
 	CameraSurfaceView camera_view;
 	OpenGLRenderer renderer;
 	HashMap<Integer, Asset> assetList;
 
-	WebView info_panel;
-	private Picture pic = null;
-	private Timer myTimer; // timer for waiting until last picture loaded
+	public WebView info_panel;
 
-
-	private final int TEXTURE_WIDTH  = ( 720 );
-	private final int TEXTURE_HEIGHT    = ( 720 );
-
-	public Bitmap info_texture;
+	public volatile Bitmap info_texture;
 	public boolean info_texture_dirty = false;
 
-	// Variables
-	public Surface surface = null;
-
-
-	// XXX XXX XXX XXX
+	/**
+	 * For debugging, enable this boolean to save renered info textures to file.
+	 * file_num is used to incrementally number the output files.
+	 */
+	boolean save_textures_to_files = false;
 	int file_num = 0;
-	// XXX XXX XXX XXX
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -95,10 +77,8 @@ public class ARActivity extends Activity {
 		renderer.setSharedPreferences(prefs);
 		renderer.setOrientationProvider(orient);
 		view.setRenderer(renderer);
-//		setContentView(view);
 
 		setContentView(R.layout.activity_ar);
-//		info_panel = (WebView) findViewById(R.id.infoPanel);
 
 		Intent intent = getIntent();
 		String data = intent.getStringExtra("DATA");
@@ -115,18 +95,16 @@ public class ARActivity extends Activity {
 
 		// Set up the info panel WebView
 		info_panel = new WebView(this);
-
 		info_panel.setBackgroundColor(0x00000000);
+		String first_page = "<html><head><link REL=StyleSheet HREF=\"file:///android_asset/info_display/info.css\" TYPE=\"text/css\"></head><body>"
+				+ "<h3>Touch an asset to view more info</h3>..."
+				+ "</body></html>";
+		info_panel.loadDataWithBaseURL("file:///android_asset/info_display/", first_page, "text/html", "UTF-8", null);
 
-//		info_panel.loadUrl("file:///android_asset/info_display/index.html");
-
-		info_panel.loadData("<html><body>"
-						+ "..."
-						+ "</body></html>",
-				"text/html", "utf-8");
+		updateInfoDisplay(0);
 
 		if (preview == null) {
-			System.out.println("composite is null!");
+			Log.wtf("View composite", "composite is null!");
 			System.exit(0);
 		}
 		if (preview.getChildCount() == 0) {
@@ -137,9 +115,7 @@ public class ARActivity extends Activity {
 		else {
 			preview.removeAllViews();
 			camera_view = null;
-			view = null;
 		}
-
 	}
 
 	@Override
@@ -153,20 +129,18 @@ public class ARActivity extends Activity {
 
 		switch (e.getAction()) {
 			case MotionEvent.ACTION_UP:
-				System.out.println("TOUCH!   X: " + x + "  Y: " + y);
 				renderer.pick(x, y);
 				break;
 		}
 		return true;
 	}
 
-	@TargetApi(Build.VERSION_CODES.KITKAT)
 	public void updateInfoDisplay(int id) {
 		String html;
 		// 0 means no asset was selected (blank area was touched)
 		if (id == 0) {
 			html = "<html><head><link REL=StyleSheet HREF=\"file:///android_asset/info_display/info.css\" TYPE=\"text/css\"></head><body>"
-					+ "..."
+					+ "<h3>Touch an asset to view more info</h3>..."
 					+ "</body></html>";
 		} else {
 			html = "<html><head><link REL=StyleSheet HREF=\"info.css\" TYPE=\"text/css\"></head><body>"
@@ -174,74 +148,69 @@ public class ARActivity extends Activity {
 					+ "</body></html>";
 		}
 
-		System.out.println("about to create bitmap...");
-		HTML2Bitmap(info_panel, 720, 720, "file:///android_asset/info_display/", html);
-		System.out.println("... bitmap done");
-		info_texture_dirty = true;
-
-		// write it to a file for testing..
-		File myDir = new File(Environment.getExternalStorageDirectory(), "Sample");
-		if (myDir.exists())
-		{
-		}
-		else
-		{
-			myDir.mkdir();
-		}
-		String fname = "sample_" + file_num++ + ".png";
-		File file1 = new File(myDir, fname);
-
-		if(info_texture!=null)
-		{
-			try
-			{
-				if (!file1.exists()) {
-					file1.createNewFile();
-				}
-				FileOutputStream out = new FileOutputStream(file1);
-				info_texture.compress(Bitmap.CompressFormat.PNG, 10, out);
-				out.flush();
-				out.close();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}}
+		HTML2Bitmap(info_panel, "file:///android_asset/info_display/", html);
 	}
 
 	/**
 	 * Generates a bitmap from some HTML.
 	 * From here: http://stackoverflow.com/questions/4633988/generate-bitmap-from-html-in-android
 	 * @param w A WebView instance
-	 * @param containerWidth width
-	 * @param containerHeight height
 	 * @param baseURL Base URL to render the content in
 	 * @param content HTML string
 	 * @return
 	 */
-
-	public void HTML2Bitmap(final WebView w, final int containerWidth, final int containerHeight, final String baseURL, final String content) {
-		System.out.println("START HTML2BITMAP");
-
-		info_panel.loadDataWithBaseURL(baseURL, content, "text/html", "UTF-8", null);
-		info_panel.measure(View.MeasureSpec.makeMeasureSpec(
+	public void HTML2Bitmap(final WebView w, final String baseURL, final String content) {
+		w.loadDataWithBaseURL(baseURL, content, "text/html", "UTF-8", null);
+		w.measure(View.MeasureSpec.makeMeasureSpec(
 						View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED),
 				View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-		info_panel.layout(0, 0, info_panel.getMeasuredWidth(),
-				info_panel.getMeasuredHeight());
-		info_panel.setDrawingCacheEnabled(true);
-		info_panel.buildDrawingCache();
-		//xxx
-		info_texture = Bitmap.createBitmap(info_panel.getMeasuredWidth(),
+		w.layout(0, 0, 432, 1440);//w.getMeasuredWidth(), w.getMeasuredHeight());
+
+		CountDownTimer t = new CountDownTimer(200, 10) {
+			public void onTick(long m) {
+				// don't care
+			}
+
+			public void onFinish() {
+				if (info_panel.getMeasuredHeight() == 0 || info_panel.getMeasuredWidth() == 0) {
+					return;
+				}
+				info_texture = Bitmap.createBitmap(info_panel.getMeasuredWidth(),
 				info_panel.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
 
-		Canvas bigcanvas = new Canvas(info_texture);
-		Paint paint = new Paint();
-		int iHeight = info_texture.getHeight();
-		bigcanvas.drawBitmap(info_texture, 0, iHeight, paint);
-		info_panel.draw(bigcanvas);
+				Canvas bigcanvas = new Canvas(info_texture);
+				Paint paint = new Paint();
+				int iHeight = info_texture.getHeight();
+				bigcanvas.drawBitmap(info_texture, 0, iHeight, paint);
+				info_panel.draw(bigcanvas);
+				info_texture_dirty = true;
 
+				// write it to a file for testing..
+				if (save_textures_to_files) {
+					File myDir = new File(Environment.getExternalStorageDirectory(), "Sample");
+					if (!myDir.exists()) {
+						myDir.mkdir();
+					}
+					String fname = "sample_" + file_num++ + ".png";
+					File file1 = new File(myDir, fname);
 
-		System.out.println("END HTML2BITMAP");
+					if (info_texture != null) {
+						try {
+							if (!file1.exists()) {
+								file1.createNewFile();
+							}
+							FileOutputStream out = new FileOutputStream(file1);
+							info_texture.compress(Bitmap.CompressFormat.PNG, 10, out);
+							out.flush();
+							out.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+
+			}
+		}.start();
+
 	}
 }
