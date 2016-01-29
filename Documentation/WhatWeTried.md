@@ -36,9 +36,7 @@ The files appear to record to the /storage/emulated/0/pictures and not the pictu
 
 FORMAT:
 
-\[Accel X\] \[Accel Y\] \[Accel Z\] \[Gyro X\] \[Gyro Y\] \[Gyro Z\] \[MagField X\] \[MagField y\] \[MagField z\] \[Delta time\]
-
-```Accel X Accel Y Accel Z Gyro X Gyro Y Gyro Z MagField X MagField y MagField z Delta time ```
+```Accel_X Accel_Y Accel_Z Gyro_X Gyro_Y Gyro_Z MagField_X MagField_Y MagField_Z Delta time ```
 
 * Accelerometer samples: For example <Accel X>, are `Acceleration minus Gx on the x-axis` .
 * Gyroscope samples: For example <Gyro X>, are `Angular speed around the x-axis` .
