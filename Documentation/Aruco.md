@@ -3,16 +3,23 @@
 
 Download at [the aruco sourceforge page](http://sourceforge.net/projects/aruco/files/) or [the main project page] (http://www.uco.es/investiga/grupos/ava/node/26)
 
+The main branch used for the Aruco implementation was the `aruco_sadness`
 
 ##Installation
 Good luck
 
 mkdir build
+
 cmake
+
 fix errors
+
 make -j8
+
 fix errors
+
 sudo make -j8 install
+
 fix errors
 
 ## Usage
