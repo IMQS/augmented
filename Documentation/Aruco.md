@@ -10,7 +10,9 @@ Good luck
 
 mkdir build
 
-cmake
+cd build
+
+cmake ../
 
 fix errors
 
@@ -23,4 +25,6 @@ sudo make -j8 install
 fix errors
 
 ## Usage
-The aruco cpp namespace api can be found at this [link](http://docs.ros.org/electric/api/aruco_pose/html/namespacearuco.html)
+The aAuco cpp namespace API can be found at this [link](http://docs.ros.org/electric/api/aruco_pose/html/namespacearuco.html)
+
+The ROS (Robot Operative System) Wiki page can be found [here](http://wiki.ros.org/aruco) and has more useful information and links about Aruco.

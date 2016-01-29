@@ -8,7 +8,9 @@ The java code is called directly and via the JNI (Java Native Interface).
 ##instalation
 mkdir build
 
-cmake
+cd build
+
+cmake ../
 
 make -j8
 
