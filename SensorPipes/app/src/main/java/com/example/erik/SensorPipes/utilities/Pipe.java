@@ -3,6 +3,7 @@ package com.example.erik.SensorPipes.utilities;
 import android.location.Location;
 
 import com.example.erik.SensorPipes.geometry.Cylinder;
+import com.example.erik.SensorPipes.geometry.Mesh;
 
 /**
  * Created by fritzonfire on 1/8/16.
@@ -47,7 +48,8 @@ public class Pipe extends Asset {
 		return this.angle;
 	}
 
-	public Cylinder get_cylinder() {
+	@Override
+	public Mesh get_mesh() {
 		if (this.cylinder == null) {
 			this.cylinder = new Cylinder(this.get_length(), 0.3f, 16);
 			this.cylinder.set_rotation(0, 0, this.get_angle());
@@ -70,6 +72,7 @@ public class Pipe extends Asset {
 			float z = 0;
 
 			this.cylinder.set_translation(x, y, z);
+			this.cylinder.setCullEnabled(true);
 		}
 		return this.cylinder;
 	}

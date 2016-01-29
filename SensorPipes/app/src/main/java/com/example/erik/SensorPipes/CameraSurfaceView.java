@@ -37,6 +37,7 @@ class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
 	/* Aruco things and board configuration */
 	public final static int numBuffers = 10;
+	public static boolean avail = false;
 	/*public final static double[] cameraMatrix =  {3.5940654374921087e+02, 0., 1.6747001104532444e+02, 0.,
 			3.5885540304154000e+02, 1.1343682346741998e+02, 0., 0., 1. };
 	public final int[] ids = {	4, 	 161, 739,
@@ -121,7 +122,7 @@ class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 			}
 			if (camera != null) {
 				camera.addCallbackBuffer(params[0]);
-			}
+			} else avail = false;
 			return null;
 		}
 
@@ -196,6 +197,7 @@ class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 		cp.setPreviewSize(this.width, this.height);
 		camera.setParameters(cp);
 		camera.startPreview();
+		avail = true;
 	}
 
 	@Override
@@ -231,6 +233,7 @@ class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 		camera.stopPreview();
 		camera.setPreviewCallback(null);
 		camera.release();
+		avail = false;
 		camera = null;
 	}
 

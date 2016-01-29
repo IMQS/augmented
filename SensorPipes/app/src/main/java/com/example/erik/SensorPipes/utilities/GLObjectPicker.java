@@ -22,10 +22,6 @@ public class GLObjectPicker {
 		c[1] = (float)bytes[2] / 255.0f;
 		c[2] = (float)bytes[3] / 255.0f;
 		c[3] = 1f;
-
-		System.out.println(c[0] + "  " + c[1] + "  " + c[2]);
-
-		System.out.println("==============");
 		return c;
 	}
 

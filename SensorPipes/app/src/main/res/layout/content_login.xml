@@ -59,13 +59,6 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Spoof Gps"
-            android:id="@+id/spoof_gps_button"
-            android:layout_gravity="center_horizontal"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="Offline"
             android:id="@+id/offline_button"
             android:layout_gravity="center_horizontal"/>
